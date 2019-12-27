@@ -1,11 +1,22 @@
 from django.db import models
 
 # Create your models here.
+class Equipmenttype(models.Model) :
+    name = models.CharField(max_length=200)
 
+    def __str__(self):
+        return self.name
 
 class Equipment(models.Model) :
     name = models.CharField(max_length=200)
     date_of_purchase = models.DateField()
+
+    equipment_choices = list(Equipmenttype.objects.all())
+    equipment_type = models.CharField(max_length=100, choices=equipment_choices, default=None)
+
+    class Meta:
+        verbose_name = "Equipment"
+        verbose_name_plural = "Equipments"
 
     def __str__(self):
         return self.name
