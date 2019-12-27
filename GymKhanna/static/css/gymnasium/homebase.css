@@ -1,0 +1,63 @@
+.vio{
+    background-color: rgb(55, 80, 140);
+    height: 100px;
+    width: 90em;
+    margin: -8px;
+    padding: 0%;
+}
+.vl{
+    border-left: 1px solid rgb(255, 255, 255);
+    height: 80px;
+    margin-top: 10px;
+    margin-left: 20px;
+}
+.morewidth{
+    width: 200px;
+}
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    margin: none;
+}
+ul{
+    margin: 0px;
+    padding: 0px;
+    list-style: none;
+}
+ul li{
+    float: left;
+    width: 100px;
+    height: 100px;
+    text-align: center;
+}
+ul li a{
+    text-decoration: none;
+    padding-top: 40px;
+    color: white;
+    display: block;
+    font-size: larger;
+    padding-bottom: 26px;
+}
+ul li:hover{
+    background-color: brown;
+}
+.nohover:hover{
+    background-color: rgb(55, 80, 140)
+}
+ul li ul li{
+    background-color: rgb(204, 93, 93);
+    width: 200px;
+    height: 50px;
+    text-align: center;
+}
+ul li ul li a{
+    font-size: small;
+    text-decoration: none;
+    padding-top: 15px;
+}
+ul li ul{
+    display: none;
+    padding-top: 10px;
+}
+ul li:hover ul{
+    display: block;
+}
