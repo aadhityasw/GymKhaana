@@ -55,6 +55,31 @@
                     <a href="login">Login</a>
                 {% endif %}
             </li>
+            {% if user.is_authenticated %}
+                {% if user.is_superuser %}
+                    <li style="float: right;">
+                        <a href="admin">My Account</a>
+                    </li>
+                {% else %}
+                    {% if user.isStudent %}
+                        <li style="float: right;">
+                            <a href="student-home">My Account</a>
+                        </li>
+                    {% else %}
+                        {% if user.isManager %}
+                            <li style="float: right;">
+                                <a href="manager-home">My Account</a>
+                            </li>
+                        {% else %}
+                            {% if user.isTrainer %}
+                                <li style="float: right;">
+                                    <a href="trainer-home">My Account</a>
+                                </li>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            {% endif %}
         </ul >
     </nav>
 
