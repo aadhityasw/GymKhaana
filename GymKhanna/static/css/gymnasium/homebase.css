@@ -9,6 +9,7 @@ body{
     width: 100%;
     position: fixed;
     padding: 0%;
+    z-index:1;
 }
 .vl{
     border-left: 1px solid rgb(255, 255, 255);
@@ -63,3 +64,51 @@ ul li ul{
 ul li:hover ul{
     display: block;
 }
+ul li:hover ul li{
+    display: block;
+}
+.footer{
+    background-color: rgb(59, 66, 131);
+    position: fixed;
+    margin-top: 90%;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    color: white;
+    height: 200px;
+    font-size: 20px;
+    font-family: forte;
+    color: black;
+    z-index:1;
+}
+.footerleft{
+    float: left;
+    margin-left: 40px;
+    margin-bottom: 0%;
+    margin-top: 25px;
+}
+.footerright{
+    float:right;
+    margin-top: 25px;
+    margin-right: 40px;
+    margin-bottom: 0%;
+}
+.xyz img{
+    height: 180px;
+    width: 180px;
+    margin-left: 27%;
+}
+.copyright {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: rgb(48, 48, 119);
+    color: white;
+    text-align: center;
+    height: 40px;
+    z-index:1;
+  }
+.copyright p{
+    margin-bottom: 10px;
+  }
