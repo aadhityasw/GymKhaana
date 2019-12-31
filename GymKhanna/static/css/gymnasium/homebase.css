@@ -1,8 +1,13 @@
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    margin: auto;
+    padding: 0%;
+}
 .vio{
     background-color: rgb(55, 80, 140);
     height: 100px;
-    width: 90em;
-    margin: -8px;
+    width: 100%;
+    position: fixed;
     padding: 0%;
 }
 .vl{
@@ -14,10 +19,7 @@
 .morewidth{
     width: 200px;
 }
-body{
-    font-family: Arial, Helvetica, sans-serif;
-    margin: none;
-}
+
 ul{
     margin: 0px;
     padding: 0px;
