@@ -83,10 +83,12 @@
         </ul >
     </nav>
 
-    {% block body %} 
-    
-    {% endblock %}
 
+    <div class="pagebody">
+        {% block body %} 
+    
+        {% endblock %}
+    </div>
 
     <div class="footer">
         <div class="footerleft">
@@ -110,7 +112,7 @@
             <br>
             <a> Sunday: 12:00 PM – 11:30 PM</a>
         </div>
-        <div class="xyz">
+        <div class="footermiddle">
             <img src="{% static 'img/footer.jpg' %}">
         </div>
     </div>

@@ -67,6 +67,14 @@ ul li:hover ul{
 ul li:hover ul li{
     display: block;
 }
+.pagebody {
+    z-index: 0;
+    position: absolute;
+    top: 100px;
+    bottom: 10%;
+    width: 100%;
+    height: fit-content;
+}
 .footer{
     background-color: rgb(59, 66, 131);
     position: fixed;
@@ -93,10 +101,10 @@ ul li:hover ul li{
     margin-right: 40px;
     margin-bottom: 0%;
 }
-.xyz img{
+.footermiddle img{
     height: 180px;
     width: 180px;
-    margin-left: 27%;
+    margin-left: 25%;
 }
 .copyright {
     position: fixed;
@@ -112,3 +120,4 @@ ul li:hover ul li{
 .copyright p{
     margin-bottom: 10px;
   }
+
