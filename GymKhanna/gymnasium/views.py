@@ -6,6 +6,9 @@ from .forms import EquipmentForm
 def HomePage(request) :
     return render(request, 'gymnasium/home.html')
 
+def FitnessClasses(request) :
+    return render(request, 'gymnasium/fitnessClasses.html')
+
 def AddEquipment(request) :
     if request.method == 'POST':  # data sent by user
         form = EquipmentForm(request.POST)

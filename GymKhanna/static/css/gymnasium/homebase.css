@@ -1,15 +1,16 @@
 body{
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: forte;
     margin: auto;
     padding: 0%;
 }
 .vio{
-    background-color: rgb(55, 80, 140);
+    background-image: linear-gradient(to right, rgb(105, 159, 221),rgb(32, 66, 139));
     height: 100px;
     width: 100%;
-    position: fixed;
+    position: relative;
     padding: 0%;
     z-index:1;
+    overflow: visible;
 }
 .vl{
     border-left: 1px solid rgb(255, 255, 255);
@@ -44,13 +45,18 @@ ul li:hover{
     background-color: brown;
 }
 .nohover:hover{
-    background-color: rgb(55, 80, 140)
+    background: none;
 }
 ul li ul li{
     background-color: rgb(204, 93, 93);
     width: 200px;
     height: 50px;
     text-align: center;
+}
+ul li a:hover{
+    text-decoration: none;
+    color: white;
+    display: block;
 }
 ul li ul li a{
     font-size: small;
@@ -59,7 +65,7 @@ ul li ul li a{
 }
 ul li ul{
     display: none;
-    padding-top: 10px;
+    padding-top: 6px;
 }
 ul li:hover ul{
     display: block;
@@ -76,8 +82,8 @@ ul li:hover ul li{
     height: fit-content;
 }
 .footer{
-    background-color: rgb(59, 66, 131);
-    position: fixed;
+    background-image: linear-gradient(to right, rgb(105, 159, 221),rgb(32, 66, 139));
+    position: relative;
     margin-top: 90%;
     left: 0;
     bottom: 0;
@@ -87,7 +93,6 @@ ul li:hover ul li{
     font-size: 20px;
     font-family: forte;
     color: black;
-    z-index:1;
 }
 .footerleft{
     float: left;

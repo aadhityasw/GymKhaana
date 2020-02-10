@@ -1,9 +1,75 @@
 {% extends 'gymnasium/homebase.html' %} 
 {% load static %}
 
+{% block header %}
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" ></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
+    <link rel="stylesheet" href="{% static 'css/gymnasium/home.css' %}" type="text/css">
+{% endblock %}
+
 
 {% block body %}
     {% if user.is_authenticated %}
         <h1>Welcome {{ user }}</h1>
     {% endif %}
+    <div class="animation"> 
+        <div id="carouselExampleInterval" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+              <div class="carousel-item active animated rollIn" data-interval="2000">
+                <img  style="height: 500px;" src="{% static 'img/carousel/photo1.jpg' %}" class="d-block w-100" alt="...">
+              </div>
+              <div class="carousel-item animated rollIn" data-interval="2000">
+                <img style="height: 500px;"src="{% static 'img/carousel/photo2.jpg' %}" class="d-block w-100" alt="...">
+              </div>
+              <div class="carousel-item animated rollIn" data-interval="2000">
+                <img style="height: 500px;"src="{% static 'img/carousel/photo3.jpg' %}" class="d-block w-100" alt="...">
+              </div>
+              <div class="carousel-item animated rollIn" data-interval="2000">
+                <img style="height: 500px;"src="{% static 'img/carousel/photo4.jpg' %}" class="d-block w-100" alt="...">
+              </div>
+              <div class="carousel-item animated rollIn" data-interval="2000">
+                <img style="height: 500px;" src="{% static 'img/carousel/photo5.jpg' %}" class="d-block w-100" alt="...">
+              </div>
+              <div class="carousel-item animated rollIn" data-interval="2000">
+                <img style="height: 500px;"src="{% static 'img/carousel/photo6.jpg' %}" class="d-block w-100" alt="...">
+              </div>
+              <div class="carousel-item animated rollIn" data-interval="2000">
+                <img style="height: 500px;"src="{% static 'img/carousel/photo7.jpg' %}" class="d-block w-100" alt="...">
+              </div>
+              <div class="carousel-item animated rollIn" data-interval="2000">
+                <img style="height: 500px;"src="{% static 'img/carousel/photo8.jpg' %}" class="d-block w-100" alt="...">
+              </div>
+            </div>
+            <a class="carousel-control-prev" href="#carouselExampleInterval" role="button" data-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselExampleInterval" role="button" data-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="sr-only">Next</span>
+            </a>
+        </div>
+    </div>
+
+    <h1 class="title">About Us</h1>
+    <div class="about">
+        <table>
+        <tr>
+            <td><img src="{% static 'img/carousel/photo2.jpg' %}" style="width: 350px; height: 350px; margin-left: 50px;"></td>
+            <td><p style="width: 700px; margin-left: 200px; ">The Colorado State Climbing team was started in Fall of 2012 as a way to bring climbers together and form a strong climbing community at CSU. The team began competing in USA Climbing’s Collegiate series (previously called CCS) shortly thereafter, and in the fall of 2014, they were accepted as one of the 31 official sports clubs at Colorado State University. CSU Climbing competes at the national level, and won the Rocky Mountain region for four consecutive years, placed 3rd at nationals in 2014 and are two-time national champions, winning back to back in 2015 and 2016. In 2017, the team placed 2nd in the nation.
+
+            Practices are held at Ascent Studio on Monday, Tuesday, and Thursday nights from 7:30-10:30 PM. The season runs from October – April, with a series of local competitions culminating in regional and national championships. Apart from competitions, the team is still focused on building and supporting the climbing community Colorado State University as well as in Fort Collins and looking for climbers of all levels, interests, and passions!</pstyle="width: 250px;></td>
+        <td colspan="9">
+            <br>
+            <br>
+            <br>
+
+        </td>
+            
+            </tr>
+        </table>
+    </div>
 {% endblock %}

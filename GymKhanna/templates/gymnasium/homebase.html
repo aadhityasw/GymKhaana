@@ -4,31 +4,31 @@
         {% block title %} Gym Khanna {% endblock %}
     </title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/gymnasium/homebase.css' %}" type="text/css">
     {% block header %} 
     
     {% endblock %}
+    <link rel="stylesheet" href="{% static 'css/gymnasium/homebase.css' %}" type="text/css">
 </head>
 
 <body style="margin: auto;">
     <nav class="vio">
         <ul>
             <li style="margin-top: 0px;" class="nohover morewidth">
-                <a href="https://chennai.vit.ac.in" style="padding: 5px;"><img src="{% static 'img/vitlogo.png' %}" width="200px" height="90px"></a>
+                <a href="https://chennai.vit.ac.in" style="padding: 5px;"><img src="{% static 'img/vitlogo.png' %}" width="100px" height="90px"></a>
             </li>
-            <li style="width: auto; margin-top: 0px;" class="nohover">
-                <div class="vl" ></div>
+            <li style="margin-left: 8%" class="nohover morewidth">
+                <a href="/" ><h1 style="color: black; font-size: 35px; margin-top: auto; font-family: forte;">Gym Khanna</h1></a>
             </li>
-            <li style="margin-left: 5px;" class="nohover morewidth">
-                <a href="/" ><h1 style="color: antiquewhite; size: 80px; margin-top: auto;">Gym Khanna</h1></a>
+            <li class="nohover">
+                <div style="width: 50%;"></div>
             </li>
             <li>
-                <a href="#">Home</a>
+                <a href="/">Home</a>
             </li>
             <li>
                 <a href="#">Fitness</a>
                 <ul>
-                    <li><a href="">Fitness Classes</a></li>
+                    <li><a href="fitness-classes">Fitness Classes</a></li>
                     <li><a href="">Personal Training</a></li>
                     <li><a href="">Become an Instructor</a></li>
                     <li><a href="">Fitness Polices</a></li>
