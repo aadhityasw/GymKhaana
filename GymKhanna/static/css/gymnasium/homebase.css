@@ -86,10 +86,10 @@ ul li:hover ul li{
     position: relative;
     margin-top: 90%;
     left: 0;
-    bottom: 0;
+    bottom: 40px;
     width: 100%;
     color: white;
-    height: 200px;
+    height: 180px;
     font-size: 20px;
     font-family: forte;
     color: black;
@@ -108,7 +108,7 @@ ul li:hover ul li{
 }
 .footermiddle img{
     height: 180px;
-    width: 180px;
+    width: 200px;
     margin-left: 25%;
 }
 .copyright {

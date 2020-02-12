@@ -60,3 +60,11 @@ body{
     width: auto;
     height: auto;
 }
+.footer
+{
+    display: none;
+}
+.pagebody
+{
+    margin-top: 10%;
+}
