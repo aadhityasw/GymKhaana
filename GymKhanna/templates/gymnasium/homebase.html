@@ -53,7 +53,7 @@
                 {% if user.is_authenticated %}
                     <a href="logout">Logout</a>
                 {% else %}
-                    <a href="login">Login</a>
+                    <a href="/login">Login</a>
                 {% endif %}
             </li>
             {% if user.is_authenticated %}
@@ -62,17 +62,17 @@
                         <a href="admin">My Account</a>
                     </li>
                 {% else %}
-                    {% if user.isStudent %}
+                    {% if user.is_student %}
                         <li style="float: right;">
                             <a href="student-home">My Account</a>
                         </li>
                     {% else %}
-                        {% if user.isManager %}
+                        {% if user.is_manager %}
                             <li style="float: right;">
                                 <a href="manager-home">My Account</a>
                             </li>
                         {% else %}
-                            {% if user.isTrainer %}
+                            {% if user.is_trainer %}
                                 <li style="float: right;">
                                     <a href="trainer-home">My Account</a>
                                 </li>
