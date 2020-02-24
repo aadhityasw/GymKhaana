@@ -1,0 +1,12 @@
+{% extends 'Customer/base.html' %} 
+{% load static %}
+
+{% block header %}
+    
+{% endblock %}
+
+{% block body %}
+    {% if user.is_authenticated %}
+        <h1>Welcome {{ user }}</h1>
+    {% endif %}
+{% endblock %}

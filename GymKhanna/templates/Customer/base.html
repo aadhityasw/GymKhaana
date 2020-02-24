@@ -1,0 +1,54 @@
+<head>
+    <meta charset="utf-8">
+    <title>
+        {% block title %} Gym Khanna {% endblock %}
+    </title>
+    {% load static %}
+    {% block header %} 
+    
+    {% endblock %}
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/gymnasium/homebase.css' %}" type="text/css">
+</head>
+
+<body style="margin: auto;">
+    <nav class="vio">
+        <ul>
+            <li style="margin-top: 0px;" class="nohover morewidth">
+                <a href="http://chennai.vit.ac.in/" style="padding: 5px;"><img src="{% static 'img/vitlogo.png' %}" width="100px" height="90px"></a>
+            </li>
+            <li style="margin-left: 8%" class="nohover morewidth">
+                <a href="/" ><h1 style="color: black; font-size: 35px; margin-top: auto; font-family: forte;">Gym Khanna</h1></a>
+            </li>
+            <li class="nohover">
+                <div style="width: 50%;"></div>
+            </li>
+            <li>
+                <a href="/student-home">Profile</a>
+            </li>
+            <li>
+                <a href="#">Register</a>
+            </li>
+            <li>
+                <a href="#">Notifications</a>
+            </li>
+            <li style="float: right;">
+                {% if user.is_authenticated %}
+                    <a href="/logout">Logout</a>
+                {% endif %}
+            </li>
+        </ul >
+    </nav>
+
+
+    <div class="pagebody">
+        {% block body %} 
+    
+        {% endblock %}
+    </div>
+    
+    <div class="copyright">
+        <p style="margin-top: 10px;">© Copyright - VIT Campus creation </p>
+    </div>
+
+</body>

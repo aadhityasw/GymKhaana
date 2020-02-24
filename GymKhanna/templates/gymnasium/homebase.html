@@ -51,7 +51,7 @@
             </li>
             <li style="float: right;">
                 {% if user.is_authenticated %}
-                    <a href="logout">Logout</a>
+                    <a href="/logout">Logout</a>
                 {% else %}
                     <a href="/login">Login</a>
                 {% endif %}
@@ -64,17 +64,17 @@
                 {% else %}
                     {% if user.is_student %}
                         <li style="float: right;">
-                            <a href="student-home">My Account</a>
+                            <a href="/customer-profile">My Account</a>
                         </li>
                     {% else %}
                         {% if user.is_manager %}
                             <li style="float: right;">
-                                <a href="manager-home">My Account</a>
+                                <a href="manager-profile">My Account</a>
                             </li>
                         {% else %}
                             {% if user.is_trainer %}
                                 <li style="float: right;">
-                                    <a href="trainer-home">My Account</a>
+                                    <a href="trainer-profile">My Account</a>
                                 </li>
                             {% endif %}
                         {% endif %}

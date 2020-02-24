@@ -22,3 +22,7 @@ def AddEquipment(request) :
     else:  # display empty form
         form = EquipmentForm()
     return render(request, 'Manager/addEquipment.html', {'add_eqip_form' : form})
+
+
+def CustomerProfile(request) :
+    return render(request, 'Customer/profile.html')
