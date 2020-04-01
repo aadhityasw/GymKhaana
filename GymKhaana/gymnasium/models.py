@@ -1,4 +1,5 @@
 from django.db import models
+from users.models import CustomUser;
 
 class Equipmenttype(models.Model) :
     name = models.CharField(max_length=200)
@@ -37,10 +38,41 @@ class Package(models.Model) :
     name = models.CharField(max_length=200)
     price = models.FloatField(max_length=4)
     timings = models.CharField(max_length=100)
+    duration = models.IntegerField(default=1)
 
     class Meta:
         verbose_name = "Package"
         verbose_name_plural = "Packages"
 
     def __str__(self):
-        return self.equipment.name
+        stri = self.name + " - " + str(self.duration) + " months"
+        return (stri)
+
+
+class Membership(models.Model) :
+    name = models.ForeignKey('users.CustomUser', on_delete=models.CASCADE, related_name="customer")
+    deadline = models.DateTimeField()
+    package = models.ForeignKey('Package', on_delete=models.CASCADE, related_name="package")
+
+    class Meta :
+        verbose_name = "Membership"
+        verbose_name_plural = "Memberships"
+
+    def __str__(self):
+        return_string = str(self.name) + " - " + str(self.package)
+        return (return_string)
+
+
+class Notification(models.Model) :
+    #customer = models.ManyToManyField(CustonUser, related_name="customers")
+    package = models.ManyToManyField(Package, related_name="packages")
+    trainer = models.ForeignKey('users.CustomUser', on_delete=models.CASCADE, related_name="trainer")
+    content = models.TextField(max_length=500)
+    end_time = models.DurationField()
+
+    class Meta :
+        verbose_name = "Notification"
+        verbose_name_plural = "Notifications"
+
+    def __str__(self):
+        return (str(self.trainer))
