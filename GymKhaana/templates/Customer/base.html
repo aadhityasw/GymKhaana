@@ -4,11 +4,11 @@
         {% block title %} Gym Khaana {% endblock %}
     </title>
     {% load static %}
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/gymnasium/homebase.css' %}" type="text/css">
     {% block header %} 
     
     {% endblock %}
-    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/gymnasium/homebase.css' %}" type="text/css">
 </head>
 
 <body style="margin: auto;">
@@ -24,7 +24,7 @@
                 <div style="width: 50%;"></div>
             </li>
             <li>
-                <a href="/student-home">Profile</a>
+                <a href="/customer-profile">Profile</a>
             </li>
             <li>
                 <a href="#">Register</a>

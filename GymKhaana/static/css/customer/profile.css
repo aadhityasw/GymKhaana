@@ -1,0 +1,14 @@
+body {
+    padding: 0%;
+    margin: auto;
+}
+
+h2 {
+    margin: auto;
+    width: fit-content;
+    text-align: center;
+}
+
+ul, ul li, ul li:hover{
+    background-color: unset;
+}

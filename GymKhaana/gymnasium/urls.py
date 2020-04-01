@@ -12,6 +12,6 @@ urlpatterns = [
 
     path('aquatics/', views.Aquatics, name='aquatics'),
 
-    path('customer-profile/', views.CustomerProfile, name='customer-profile'),
+    path('customer-profile/', views.DisplayCustomerProfile, name='customer-profile'),
 
 ]

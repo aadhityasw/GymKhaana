@@ -2,11 +2,54 @@
 {% load static %}
 
 {% block header %}
-    
+    <link rel="stylesheet" href="{% static 'css/Customer/profile.css' %}" type="text/css">
 {% endblock %}
 
 {% block body %}
     {% if user.is_authenticated %}
         <h1>Welcome {{ user }}</h1>
+        <h2>Customer Profile</h1>
+        <table>
+            <tr>
+                <th>Name</th>
+                <td>{{ customer.account.username }}</td>
+            </tr>
+            <tr>
+                <th>Age</th>
+                <td>{{ customer.age }}</td>
+            </tr>
+            <tr>
+                <th>Weight</th>
+                <td>{{ customer.weight }}</td>
+            </tr>
+            <tr>
+                <th>Medical History</th>
+                <td>{{ customer.medical_history }}</td>
+            </tr>
+            <tr>
+                <th>Allergies</th>
+                <td>{{ customer.allergies }}</td>
+            </tr>
+            <tr>
+                <th>Membership Status</th>
+                <td>{{ membership_status }}</td>
+            </tr>
+            {% if membership_status == 'Active' %}
+                <tr>
+                    <th>Gym Package</th>
+                    <td>{{ customer.gym_package }}</td>
+                </tr>
+            {% endif %}
+            <tr>
+                <th>Interested Equipments</th>
+                <td>
+                    <ul>
+                        {% for eq in customer.equipment_interest.all %}
+                            <li>{{ eq }}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+        </table>
     {% endif %}
 {% endblock %}

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from .forms import EquipmentForm, NotificationForm
-
+from users.models import CustomUser, CustomerProfile
 
 def HomePage(request) :
     return render(request, 'gymnasium/home.html')
@@ -27,8 +27,10 @@ def AddEquipment(request) :
     return render(request, 'Manager/addEquipment.html', {'add_eqip_form' : form})
 
 
-def CustomerProfile(request) :
-    return render(request, 'Customer/profile.html')
+def DisplayCustomerProfile(request) :
+    user_object = CustomUser.objects.get(username=request.user)
+    customer_profile_object = CustomerProfile.objects.get(account=user_object)
+    return render(request, 'Customer/profile.html', {'customer' : customer_profile_object, 'membership_status' : 'Active'})
 
 
 def PostNotification(request) :
