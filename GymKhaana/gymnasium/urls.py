@@ -14,4 +14,6 @@ urlpatterns = [
 
     path('customer-profile/', views.DisplayCustomerProfile, name='customer-profile'),
 
+    path('view-notifications/', views.DisplayNotification, name='display-notification'),
+
 ]

@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 
 from .forms import EquipmentForm, NotificationForm
 from users.models import CustomUser, CustomerProfile
-from .models import Membership
+from .models import Membership, Notification, Package
 import datetime
 
 def HomePage(request) :
@@ -43,6 +43,16 @@ def DisplayCustomerProfile(request) :
     else :
         membership_status = "Inactive"
     return render(request, 'Customer/profile.html', {'customer' : customer_profile_object, 'membership_status' : membership_status, 'membership' : membership_object})
+
+
+@login_required
+def DisplayNotification(request) :
+    user_object = CustomUser.objects.get(username=request.user)
+    customer_profile_object = CustomerProfile.objects.get(account=user_object)
+    package_object = customer_profile_object.gym_package
+    notification_objects = Notification.objects.filter(package=package_object)
+    num_notifications = len(notification_objects)
+    return render(request, 'Customer/displayNotification.html', {'num_notifications' : range(num_notifications), 'notifications' : notification_objects})
 
 
 def PostNotification(request) :

@@ -1,5 +1,4 @@
 from django.db import models
-#from users.models import CustomUser;
 
 class Equipmenttype(models.Model) :
     name = models.CharField(max_length=200)
@@ -66,7 +65,11 @@ class Membership(models.Model) :
 class Notification(models.Model) :
     #customer = models.ManyToManyField(CustonUser, related_name="customers")
     package = models.ManyToManyField(Package, related_name="packages")
-    trainer = models.ForeignKey('users.CustomUser', on_delete=models.CASCADE, related_name="trainer")
+    trainer = models.ForeignKey(
+        'users.CustomUser', 
+        on_delete=models.CASCADE, 
+        related_name="trainer", 
+        limit_choices_to={'is_trainer' : True})
     content = models.TextField(max_length=500)
     end_time = models.DurationField()
 
