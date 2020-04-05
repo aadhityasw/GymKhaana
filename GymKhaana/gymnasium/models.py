@@ -71,7 +71,7 @@ class Notification(models.Model) :
         related_name="trainer", 
         limit_choices_to={'is_trainer' : True})
     content = models.TextField(max_length=500)
-    end_time = models.DurationField()
+    end_date = models.DateField(verbose_name="Expiry for Notification")
 
     class Meta :
         verbose_name = "Notification"

@@ -1,6 +1,7 @@
 from django import forms
+from django.forms import ModelForm
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import CustomUser
+from .models import CustomUser, CustomerProfile
 
 class CustomUserCreationForm(UserCreationForm):
     
@@ -8,8 +9,16 @@ class CustomUserCreationForm(UserCreationForm):
         model = CustomUser
         #fields = ('username', 'email', 'is_customer', 'is_manager', 'is_trainer')
 
+
 class CustomUserChangeForm(UserChangeForm):
 
     class Meta(UserChangeForm.Meta):
         model = CustomUser
         #fields = ('username', 'email', 'is_customer', 'is_manager', 'is_trainer')
+
+
+class CustomerProfileChangeForm(ModelForm) :
+
+    class Meta :
+        model = CustomerProfile
+        exclude = ()

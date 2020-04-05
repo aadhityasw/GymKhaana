@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 
 from .forms import EquipmentForm, NotificationForm
 from users.models import CustomUser, CustomerProfile
-from .models import Membership, Notification, Package
+from .models import Membership, Package, Notification
 import datetime
 
 def HomePage(request) :
@@ -47,6 +47,7 @@ def DisplayCustomerProfile(request) :
 
 @login_required
 def DisplayNotification(request) :
+    Notification.objects.filter(end_date__lt=datetime.date.today()).delete()        # To delete the expired notifications from the database
     user_object = CustomUser.objects.get(username=request.user)
     customer_profile_object = CustomerProfile.objects.get(account=user_object)
     package_object = customer_profile_object.gym_package
