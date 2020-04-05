@@ -6,7 +6,7 @@ class CustomUserManager(UserManager) :
     pass
 
 class CustomUser(AbstractUser) :
-    is_student = models.BooleanField(default=True)
+    is_customer = models.BooleanField(default=True)
     is_manager = models.BooleanField(default=False)
     is_trainer = models.BooleanField(default=False)
 

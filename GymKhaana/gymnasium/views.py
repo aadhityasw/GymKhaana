@@ -52,7 +52,18 @@ def DisplayNotification(request) :
     package_object = customer_profile_object.gym_package
     notification_objects = Notification.objects.filter(package=package_object)
     num_notifications = len(notification_objects)
-    return render(request, 'Customer/displayNotification.html', {'num_notifications' : range(num_notifications), 'notifications' : notification_objects})
+    context = {'num_notifications' : num_notifications, 'notifications' : notification_objects}
+    if user_object.is_customer :
+        membership_object = Membership.objects.get(name=user_object)
+        membership_deadline = membership_object.deadline
+        membership_deadline = membership_deadline.replace(tzinfo=None)
+        days_left = (membership_deadline - datetime.datetime.now(tz=None)).days
+        if days_left < 10 and days_left >= 0 :
+            context['membership_deadline_near'] = True
+            context['days_left_expiry'] = days_left
+        else :
+            context['membership_deadline_near'] = False
+    return render(request, 'Customer/displayNotification.html', context)
 
 
 def PostNotification(request) :

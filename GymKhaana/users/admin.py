@@ -10,7 +10,7 @@ class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm 
     form = CustomUserChangeForm 
     fieldsets = UserAdmin.fieldsets + (
-        (None, {'fields': ('is_student', 'is_manager','is_trainer',)}),
+        (None, {'fields': ('is_customer', 'is_manager','is_trainer',)}),
     )
 
 admin.site.register(CustomUser, CustomUserAdmin)

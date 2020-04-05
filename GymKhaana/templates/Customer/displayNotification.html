@@ -9,7 +9,7 @@
     {% if user.is_authenticated %}
         <h1>Welcome {{ user }}</h1>
         <h2>Notification Center</h1>
-        {% if num_notifications == 0 %}
+        {% if num_notifications == 0 and membership_deadline_near == False %}
             <h1>There are no active notifications avalible.</h1>
         {% else %}
             <table>
@@ -25,6 +25,15 @@
                         <td>{{ notification }}</td>
                     </tr>
                 {% endfor %}
+                {% if membership_deadline_near %}
+                    <tr>
+                        <th>{{ num_notifications|add:"1" }}</th>
+                        <td>Your Membership to the gym is about to expire. You have 
+                            {{ days_left_expiry }} days left with your membership. 
+                            <a href="#"> Renew your membership </a> to continue using the services hassle-free.</td>
+                        <td>Gym Khaana</td>
+                    </tr>
+                {% endif %}
             </table>
         {% endif %}
     {% endif %}
