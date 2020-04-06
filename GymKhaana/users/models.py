@@ -18,6 +18,7 @@ class CustomUser(AbstractUser) :
 
 class CustomerProfile(models.Model) :
     account = models.ForeignKey('CustomUser', on_delete=models.CASCADE, related_name="profile")
+    mobile = models.IntegerField(null=False, blank=False)
     medical_history = models.TextField(max_length=1000)
     age = models.IntegerField(null=False, blank=False)
     weight = models.IntegerField(null=False, blank=False)

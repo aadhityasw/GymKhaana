@@ -1,10 +1,13 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 
 from .forms import EquipmentForm, NotificationForm
 from users.models import CustomUser, CustomerProfile
-from .models import Membership, Package, Notification
+from .models import Membership, Package, Notification, Equipmenttype
 import datetime
 
 def HomePage(request) :
@@ -19,7 +22,7 @@ def Aquatics(request) :
     return render(request, 'gymnasium/aquatics.html')
 
 
-@login_required
+"""@login_required
 def AddEquipment(request) :
     if request.method == 'POST':  # data sent by user
         form = EquipmentForm(request.POST)
@@ -28,7 +31,7 @@ def AddEquipment(request) :
             return HttpResponse('Project details added to database')
     else:  # display empty form
         form = EquipmentForm()
-    return render(request, 'Manager/addEquipment.html', {'add_eqip_form' : form})
+    return render(request, 'Manager/addEquipment.html', {'add_eqip_form' : form})"""
 
 
 @login_required
@@ -43,6 +46,62 @@ def DisplayCustomerProfile(request) :
     else :
         membership_status = "Inactive"
     return render(request, 'Customer/profile.html', {'customer' : customer_profile_object, 'membership_status' : membership_status, 'membership' : membership_object})
+
+
+@login_required
+def ChangeCustomerProfile(request) :
+    user_object = CustomUser.objects.get(username=request.user)
+    customer_profile_object = CustomerProfile.objects.get(account=user_object)
+    if request.method == 'POST' :
+        user_object.email = request.POST['email']
+        customer_profile_object.mobile = request.POST['mobile']
+        customer_profile_object.address = request.POST['address']
+        customer_profile_object.age = request.POST['age']
+        customer_profile_object.weight = request.POST['weight']
+        customer_profile_object.medical_history = request.POST['medical_history']
+        customer_profile_object.allergies = request.POST['allergies']
+        # Recieve all the names of the selected options from the checkbox, get their objects and pass them to the set() method of the respective object.
+        interested_equipments = request.POST.getlist('equipment')
+        equipment_id_list = []
+        for equipment_name in interested_equipments :
+            equipment_id_list.append(Equipmenttype.objects.get(name=equipment_name))
+        customer_profile_object.equipment_interest.set(equipment_id_list)
+        # Saving the modified objects
+        user_object.save()
+        customer_profile_object.save()
+        messages.success(request, 'Details entered have been updated.')
+        return redirect('/customer-profile')
+    else :
+        equipment_types = Equipmenttype.objects.all()
+        return render(request, 'Customer/updateCustomer.html', {'customer' : customer_profile_object, 'equipment_types' : equipment_types})
+    
+
+@login_required
+def changePassword(request) :
+    # Choose the base template for different types of users.
+    if request.user.is_customer :
+        base_template = 'Customer/base.html'
+    elif request.user.is_trainer :
+        base_template = 'Trainer/base.html'
+    else :
+        base_template = 'Manager/base.html'
+    # Handle Form Request.
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important!
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('/customer-profile')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        form = PasswordChangeForm(request.user)
+    #print(form)  Use this to view the form and make it viewable
+    return render(request, 'registration/changePassword.html', {
+        'form': form,
+        'base_template' : base_template
+    })
 
 
 @login_required
@@ -67,13 +126,13 @@ def DisplayNotification(request) :
     return render(request, 'Customer/displayNotification.html', context)
 
 
-def PostNotification(request) :
+"""def PostNotification(request) :
     if request.method == 'POST' :
         form = NotificationForm(request.POST)
         if form.is_valid() :
             form.save()
     else :
         form = NotificationForm()
-    return render(request, 'Manager/postNotification.html', {'new_notification_form' : form})
+    return render(request, 'Manager/postNotification.html', {'new_notification_form' : form})"""
 
 

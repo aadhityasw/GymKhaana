@@ -10,9 +10,13 @@ urlpatterns = [
 
     path('logout/', auth_views.LogoutView.as_view(), {'template_name': 'gymnasium/home.html'}, name='logout'),
 
+    path('change-password/', views.changePassword, name='change-password'),
+
     path('aquatics/', views.Aquatics, name='aquatics'),
 
     path('customer-profile/', views.DisplayCustomerProfile, name='customer-profile'),
+
+    path('edit-customer-profile/', views.ChangeCustomerProfile, name='edit-customer-profile'),
 
     path('view-notifications/', views.DisplayNotification, name='display-notification'),
 

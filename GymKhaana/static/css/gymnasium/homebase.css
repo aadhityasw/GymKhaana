@@ -78,6 +78,7 @@ ul li:hover ul li{
     position: absolute;
     top: 100px;
     bottom: 10%;
+    margin-bottom: 40px;
     width: 100%;
     height: fit-content;
 }

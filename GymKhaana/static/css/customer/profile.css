@@ -9,6 +9,6 @@ h2 {
     text-align: center;
 }
 
-ul, ul li, ul li:hover{
+.equipment-list li:hover{
     background-color: unset;
 }
