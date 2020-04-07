@@ -25,6 +25,7 @@ class CustomerProfile(models.Model) :
     allergies = models.TextField(max_length=500)
     address = models.TextField(max_length=500)
     gym_package = models.ForeignKey('gymnasium.Package', on_delete=models.CASCADE, related_name="subscribed_package")
+    gym_class = models.ForeignKey('gymnasium.GymClass', on_delete=models.CASCADE, related_name="registered_class")
     equipment_interest = models.ManyToManyField(Equipmenttype, related_name="equipment_interest")
 
     def __str__(self):

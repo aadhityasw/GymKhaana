@@ -97,7 +97,6 @@ def changePassword(request) :
             messages.error(request, 'Please correct the error below.')
     else:
         form = PasswordChangeForm(request.user)
-    #print(form)  Use this to view the form and make it viewable
     return render(request, 'registration/changePassword.html', {
         'form': form,
         'base_template' : base_template
@@ -109,8 +108,8 @@ def DisplayNotification(request) :
     Notification.objects.filter(end_date__lt=datetime.date.today()).delete()        # To delete the expired notifications from the database
     user_object = CustomUser.objects.get(username=request.user)
     customer_profile_object = CustomerProfile.objects.get(account=user_object)
-    package_object = customer_profile_object.gym_package
-    notification_objects = Notification.objects.filter(package=package_object)
+    gym_class_object = customer_profile_object.gym_class
+    notification_objects = Notification.objects.filter(gym_class=gym_class_object)
     num_notifications = len(notification_objects)
     context = {'num_notifications' : num_notifications, 'notifications' : notification_objects}
     if user_object.is_customer :

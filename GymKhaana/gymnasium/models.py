@@ -19,7 +19,6 @@ class Equipment(models.Model) :
         return self.name
 
 
-
 class AMC(models.Model) :
     equipment = models.ForeignKey('Equipment', on_delete=models.CASCADE)
     start_date = models.DateField()
@@ -36,7 +35,6 @@ class AMC(models.Model) :
 class Package(models.Model) :
     name = models.CharField(max_length=200)
     price = models.FloatField(max_length=4)
-    timings = models.CharField(max_length=100)
     duration = models.IntegerField(default=1)
 
     class Meta:
@@ -48,10 +46,25 @@ class Package(models.Model) :
         return (stri)
 
 
+class GymClass(models.Model) :
+    name = models.CharField(max_length=200)
+    package_name = models.ForeignKey('Package', on_delete=models.CASCADE, related_name="package_for_class")
+    timings = models.CharField(max_length=100)
+
+    class Meta:
+        verbose_name = "Gym class"
+        verbose_name_plural = "Gym classes"
+
+    def __str__(self):
+        stri = self.name + " - " + str(self.package_name.name)
+        return (stri)
+
+
 class Membership(models.Model) :
     name = models.ForeignKey('users.CustomUser', on_delete=models.CASCADE, related_name="customer")
     deadline = models.DateTimeField()
-    package = models.ForeignKey('Package', on_delete=models.CASCADE, related_name="package")
+    package = models.ForeignKey('Package', on_delete=models.CASCADE, related_name="package_for_membership")
+    gym_class = models.ForeignKey('GymClass', on_delete=models.CASCADE, related_name="gym_class_for_membership")
 
     class Meta :
         verbose_name = "Membership"
@@ -63,8 +76,7 @@ class Membership(models.Model) :
 
 
 class Notification(models.Model) :
-    #customer = models.ManyToManyField(CustonUser, related_name="customers")
-    package = models.ManyToManyField(Package, related_name="packages")
+    gym_class = models.ManyToManyField(GymClass, related_name="gym_class_for_notification")
     trainer = models.ForeignKey(
         'users.CustomUser', 
         on_delete=models.CASCADE, 
