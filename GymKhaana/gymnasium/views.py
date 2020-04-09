@@ -7,7 +7,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 
 from .forms import EquipmentForm, NotificationForm
 from users.models import CustomUser, CustomerProfile
-from .models import Membership, Package, Notification, Equipmenttype
+from .models import Membership, Package, Notification, Equipmenttype, Announcement
 import datetime
 
 def HomePage(request) :
@@ -105,7 +105,9 @@ def changePassword(request) :
 
 @login_required
 def DisplayNotification(request) :
-    Notification.objects.filter(end_date__lt=datetime.date.today()).delete()        # To delete the expired notifications from the database
+    # To delete the expired notifications from the database
+    Notification.objects.filter(end_date__lt=datetime.date.today()).delete()
+    # To display the active notifications
     user_object = CustomUser.objects.get(username=request.user)
     customer_profile_object = CustomerProfile.objects.get(account=user_object)
     gym_class_object = customer_profile_object.gym_class
@@ -135,3 +137,9 @@ def DisplayNotification(request) :
     return render(request, 'Manager/postNotification.html', {'new_notification_form' : form})"""
 
 
+def DisplayAnnouncements(request) :
+    Announcement.objects.filter(end_date__lt=datetime.date.today()).delete()
+    announcement_objects = Announcement.objects.all()
+    num_announcements = len(announcement_objects)
+    context = {'num_announcements' : num_announcements, 'announcements' : announcement_objects}
+    return render(request, 'gymnasium/announcement.html', context)

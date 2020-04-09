@@ -89,22 +89,20 @@ body{
 
 .pagebody {
     z-index: 0;
-    position: absolute;
-    top: 100px;
-    bottom: 10%;
+    position: relative;
     margin-bottom: 40px;
     width: 100%;
     height: fit-content;
+    padding-bottom: 20px;
 }
 
 .footer{
+    z-index: 0;
     background-image: linear-gradient(to right, rgb(105, 159, 221),rgb(32, 66, 139));
     position: relative;
-    margin-top: 90%;
+    margin-bottom: 40px;
     left: 0;
-    bottom: 40px;
     width: 100%;
-    color: white;
     height: 180px;
     font-size: 20px;
     font-family: forte;

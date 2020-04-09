@@ -14,6 +14,8 @@ urlpatterns = [
 
     path('aquatics/', views.Aquatics, name='aquatics'),
 
+    path('view-announcements/', views.DisplayAnnouncements, name='view-announcements'),
+
     path('customer-profile/', views.DisplayCustomerProfile, name='customer-profile'),
 
     path('edit-customer-profile/', views.ChangeCustomerProfile, name='edit-customer-profile'),

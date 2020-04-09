@@ -9,7 +9,7 @@ class Equipmenttype(models.Model) :
 class Equipment(models.Model) :
     name = models.CharField(max_length=200)
     date_of_purchase = models.DateField()
-    equipment_type = models.ForeignKey(Equipmenttype, on_delete=None)
+    equipment_type = models.ForeignKey(Equipmenttype, on_delete=models.SET_NULL, null=True)
 
     class Meta:
         verbose_name = "Equipment"
@@ -61,7 +61,7 @@ class GymClass(models.Model) :
 
 
 class Membership(models.Model) :
-    name = models.ForeignKey('users.CustomUser', on_delete=models.CASCADE, related_name="customer")
+    name = models.ForeignKey('users.CustomUser', on_delete=models.CASCADE, related_name="customer_membership")
     deadline = models.DateTimeField()
     package = models.ForeignKey('Package', on_delete=models.CASCADE, related_name="package_for_membership")
     gym_class = models.ForeignKey('GymClass', on_delete=models.CASCADE, related_name="gym_class_for_membership")
@@ -91,3 +91,19 @@ class Notification(models.Model) :
 
     def __str__(self):
         return (str(self.trainer))
+
+
+class Announcement(models.Model) :
+    account = models.ForeignKey(
+        'users.CustomUser',
+        on_delete=models.CASCADE,
+        limit_choices_to={'is_manager' : True})
+    content = models.TextField(max_length=500)
+    end_date = models.DateField(verbose_name="Expiry for Notification")
+
+    class Meta :
+        verbose_name = "Announcement"
+        verbose_name_plural = "Announcements"
+
+    def __str__(self):
+        return (str(self.account))
