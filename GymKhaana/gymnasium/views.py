@@ -143,3 +143,14 @@ def DisplayAnnouncements(request) :
     num_announcements = len(announcement_objects)
     context = {'num_announcements' : num_announcements, 'announcements' : announcement_objects}
     return render(request, 'gymnasium/announcement.html', context)
+
+
+@login_required
+def DisplayManagerProfile(request) :
+    return render(request, 'Manager/profile.html')
+
+
+@login_required
+def DisplayCustomerList(request) :
+    customer_objects = CustomerProfile.objects.all()
+    return render(request, 'Manager/displayCustomerList.html', {'customers' : customer_objects})

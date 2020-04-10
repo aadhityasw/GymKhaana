@@ -24,14 +24,34 @@
             <li class="nohover">
                 <div style="width: 50%;"></div>
             </li>
-            <li>
-                <a href="/customer-profile">Profile</a>
-            </li>
-            <li>
-                <a href="#">Register</a>
+            <li style="width: 110px;">
+                <a href="/manager-profile">My Profile</a>
             </li>
             <li style="width: 120px;">
-                <a href="/view-notifications">Notifications</a>
+                <a href="#">Notifications</a>
+                <ul>
+                    <li><a href="#">View all Notifications</a></li>
+                    <li><a href="#">Post a Notification to a class</a></li>
+                    <li><a href="#">Make Announcements</a></li>
+                    <li><a href="#">View all Announcements</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#">Members</a>
+                <ul>
+                    <li><a href="/view-customer-list">Customers</a></li>
+                    <li><a href="#">Trainers</a></li>
+                    <li><a href="#">Managers</a></li>
+                    <li><a href="#">System Administrators</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#">Equipment</a>
+                <ul>
+                    <li><a href="#">Equipment List</a></li>
+                    <li><a href="#">Create Type of Equipment</a></li>
+                    <li><a href="#">Add Equipment</a></li>
+                </ul>
             </li>
             <li style="float: right;">
                 {% if user.is_authenticated %}

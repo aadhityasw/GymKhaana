@@ -1,0 +1,42 @@
+{% extends 'Manager/base.html' %} 
+{% load static %}
+
+{% block header %}
+    <link rel="stylesheet" href="{% static 'css/Manager/profile.css' %}" type="text/css">
+{% endblock %}
+
+{% block body %}
+    {% if user.is_authenticated %}
+        <h1>Welcome {{ user }}</h1>
+        <h2>Manager Profile</h1>
+        <table>
+            <tr>
+                <th>Name</th>
+                <td>{{ manager.account.username }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ manager.account.email }}</td>
+            </tr>
+            <tr>
+                <th>Phone</th>
+                <td>{{ manager.mobile }}</td>
+            </tr>
+            <tr>
+                <th>Address</th>
+                <td>{{ manager.address }}</td>
+            </tr>
+            <tr>
+                <th>Age</th>
+                <td>{{ manager.age }}</td>
+            </tr>
+        </table>
+        <button>
+            <a href="/edit-manager-profile">Edit Profile</a>
+        </button>
+        <br>
+        <button>
+            <a href="/change-password">Change Password</a>
+        </button>
+    {% endif %}
+{% endblock %}

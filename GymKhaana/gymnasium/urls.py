@@ -22,4 +22,8 @@ urlpatterns = [
 
     path('view-notifications/', views.DisplayNotification, name='display-notification'),
 
+    path('manager-profile/', views.DisplayManagerProfile, name='manager-profile'),
+
+    path('view-customer-list/', views.DisplayCustomerList, name='view-customer-list'),
+
 ]

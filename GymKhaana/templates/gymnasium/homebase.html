@@ -4,6 +4,7 @@
         {% block title %} Gym Khaana {% endblock %}
     </title>
     {% load static %}
+    <link rel="shortcut icon" href="{%  static 'img/favicon.ico' %}">
     <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/gymnasium/homebase.css' %}" type="text/css">
     {% block header %} 
@@ -20,8 +21,8 @@
             <li style="margin-left: 8%" class="nohover morewidth">
                 <a href="/" ><h1 style="color: black; font-size: 35px; margin-top: auto; font-family: forte;">Gym Khaana</h1></a>
             </li>
-            <li class="nohover">
-                <div style="width: 50%;"></div>
+            <li class="nohover" style="width: 50px;">
+                <div></div>
             </li>
             <li>
                 <a href="/">Home</a>
@@ -46,6 +47,9 @@
                     <li><a href="">In-House Clinics</a></li>
                 </ul>
             </li>
+            <li style="width: 135px;">
+                <a href="/view-announcements">Announcements</a>
+            </li>
             <li>
                 <a href="">About</a>
             </li>
@@ -58,23 +62,23 @@
             </li>
             {% if user.is_authenticated %}
                 {% if user.is_superuser %}
-                    <li style="float: right;">
+                    <li style="float: right; width: 110px;">
                         <a href="admin">My Account</a>
                     </li>
                 {% else %}
                     {% if user.is_customer %}
-                        <li style="float: right;">
+                        <li style="float: right; width: 110px;">
                             <a href="/customer-profile">My Account</a>
                         </li>
                     {% else %}
                         {% if user.is_manager %}
-                            <li style="float: right;">
-                                <a href="manager-profile">My Account</a>
+                            <li style="float: right; width: 110px;">
+                                <a href="/manager-profile">My Account</a>
                             </li>
                         {% else %}
                             {% if user.is_trainer %}
-                                <li style="float: right;">
-                                    <a href="trainer-profile">My Account</a>
+                                <li style="float: right; width: 110px;">
+                                    <a href="/trainer-profile">My Account</a>
                                 </li>
                             {% endif %}
                         {% endif %}

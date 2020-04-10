@@ -1,0 +1,26 @@
+{% extends 'Manager/base.html' %} 
+{% load static %}
+
+{% block header %}
+    <link rel="stylesheet" href="{% static 'css/Manager/displayCustomerList.css' %}" type="text/css">
+{% endblock %}
+
+{% block body %}
+    {% if user.is_authenticated %}
+        <h1>Customer List</h1>
+        <table>
+            <tr>
+                <th>Sno</th>
+                <th>User ID</th>
+                <th>Name</th>
+            </tr>
+            {% for customer in customers %}
+                <tr>
+                    <th>{{ forloop.counter|add:"1" }}</th>
+                    <td>{{ customer.id }}</td>
+                    <td><a href="#">{{ customer.full_name }}</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+{% endblock %}

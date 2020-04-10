@@ -1,0 +1,26 @@
+{% extends 'Manager/base.html' %} 
+{% load static %}
+
+{% block header %}
+    <link rel="stylesheet" href="{% static 'css/Manager/displayManagerList.css' %}" type="text/css">
+{% endblock %}
+
+{% block body %}
+    {% if user.is_authenticated %}
+        <h1>Manager List</h1>
+        <table>
+            <tr>
+                <th>Sno</th>
+                <th>User ID</th>
+                <th>Name</th>
+            </tr>
+            {% for manager in managers %}
+                <tr>
+                    <th>{{ forloop.counter|add:"1" }}</th>
+                    <td>{{ manager.id }}</td>
+                    <td><a href="#">{{ manager.full_name }}</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+{% endblock %}

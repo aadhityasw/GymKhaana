@@ -94,6 +94,7 @@ body{
     width: 100%;
     height: fit-content;
     padding-bottom: 20px;
+    min-height: 80%;
 }
 
 .footer{
