@@ -33,6 +33,31 @@
                     </td>
                 </tr>
                 <tr>
+                    <th>Gender</th>
+                    <td>
+                        <select name="gender" id="gender">
+                            <option value="M" 
+                                {% if customer.gender == "M" %}
+                                    selected
+                                {% endif %} >
+                                Male
+                            </option>
+                            <option value="F"
+                                {% if customer.gender == "F" %}
+                                    selected
+                                {% endif %}>
+                                Female
+                            </option>
+                            <option value="O"
+                                {% if customer.gender == "O" %}
+                                    selected
+                                {% endif %}>
+                                Other
+                            </option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
                     <th>Age</th>
                     <td>
                         <input type="number" name="age" id="age" value="{{ customer.age }}">

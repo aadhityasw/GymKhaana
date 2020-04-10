@@ -6,7 +6,7 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 
 from .forms import EquipmentForm, NotificationForm
-from users.models import CustomUser, CustomerProfile
+from users.models import CustomUser, CustomerProfile, TrainerProfile, ManagerProfile
 from .models import Membership, Package, Notification, Equipmenttype, Announcement
 import datetime
 
@@ -20,6 +20,33 @@ def FitnessClasses(request) :
 
 def Aquatics(request) :
     return render(request, 'gymnasium/aquatics.html')
+
+
+@login_required
+def changePassword(request) :
+    # Choose the base template for different types of users.
+    if request.user.role == 'C' :
+        base_template = 'Customer/base.html'
+    elif request.user.role == 'T' :
+        base_template = 'Trainer/base.html'
+    else :
+        base_template = 'Manager/base.html'
+    # Handle Form Request.
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important!
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('/customer-profile')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'registration/changePassword.html', {
+        'form': form,
+        'base_template' : base_template
+    })
 
 
 """@login_required
@@ -60,6 +87,7 @@ def ChangeCustomerProfile(request) :
         customer_profile_object.weight = request.POST['weight']
         customer_profile_object.medical_history = request.POST['medical_history']
         customer_profile_object.allergies = request.POST['allergies']
+        customer_profile_object.gender = request.POST['gender']
         # Recieve all the names of the selected options from the checkbox, get their objects and pass them to the set() method of the respective object.
         interested_equipments = request.POST.getlist('equipment')
         equipment_id_list = []
@@ -74,33 +102,6 @@ def ChangeCustomerProfile(request) :
     else :
         equipment_types = Equipmenttype.objects.all()
         return render(request, 'Customer/updateCustomer.html', {'customer' : customer_profile_object, 'equipment_types' : equipment_types})
-    
-
-@login_required
-def changePassword(request) :
-    # Choose the base template for different types of users.
-    if request.user.is_customer :
-        base_template = 'Customer/base.html'
-    elif request.user.is_trainer :
-        base_template = 'Trainer/base.html'
-    else :
-        base_template = 'Manager/base.html'
-    # Handle Form Request.
-    if request.method == 'POST':
-        form = PasswordChangeForm(request.user, request.POST)
-        if form.is_valid():
-            user = form.save()
-            update_session_auth_hash(request, user)  # Important!
-            messages.success(request, 'Your password was successfully updated!')
-            return redirect('/customer-profile')
-        else:
-            messages.error(request, 'Please correct the error below.')
-    else:
-        form = PasswordChangeForm(request.user)
-    return render(request, 'registration/changePassword.html', {
-        'form': form,
-        'base_template' : base_template
-    })
 
 
 @login_required
@@ -114,7 +115,7 @@ def DisplayNotification(request) :
     notification_objects = Notification.objects.filter(gym_class=gym_class_object)
     num_notifications = len(notification_objects)
     context = {'num_notifications' : num_notifications, 'notifications' : notification_objects}
-    if user_object.is_customer :
+    if user_object.role == 'C' :
         membership_object = Membership.objects.get(name=user_object)
         membership_deadline = membership_object.deadline
         membership_deadline = membership_deadline.replace(tzinfo=None)
@@ -147,10 +148,17 @@ def DisplayAnnouncements(request) :
 
 @login_required
 def DisplayManagerProfile(request) :
-    return render(request, 'Manager/profile.html')
+    user_object = CustomUser.objects.get(username=request.user)
+    manager_profile_object = ManagerProfile.objects.get(account=user_object)
+    return render(request, 'Manager/profile.html', {'manager' : manager_profile_object})
 
 
 @login_required
 def DisplayCustomerList(request) :
     customer_objects = CustomerProfile.objects.all()
     return render(request, 'Manager/displayCustomerList.html', {'customers' : customer_objects})
+
+
+@login_required
+def DisplayIndividualCustomer(request) :
+    pass

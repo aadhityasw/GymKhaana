@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import CustomUser
 from django.contrib.auth.admin import UserAdmin
 from .forms import CustomUserCreationForm, CustomUserChangeForm 
-from .models import CustomUser, CustomerProfile
+from .models import CustomUser, CustomerProfile, TrainerProfile, ManagerProfile
 
 
 class CustomUserAdmin(UserAdmin):
@@ -10,8 +10,10 @@ class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm 
     form = CustomUserChangeForm 
     fieldsets = UserAdmin.fieldsets + (
-        (None, {'fields': ('is_customer', 'is_manager','is_trainer', 'role',)}),
+        (None, {'fields': ('role',)}),
     )
 
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(CustomerProfile)
+admin.site.register(TrainerProfile)
+admin.site.register(ManagerProfile)

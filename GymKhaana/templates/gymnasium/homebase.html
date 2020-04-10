@@ -66,17 +66,17 @@
                         <a href="admin">My Account</a>
                     </li>
                 {% else %}
-                    {% if user.is_customer %}
+                    {% if user.role == 'C' %}
                         <li style="float: right; width: 110px;">
                             <a href="/customer-profile">My Account</a>
                         </li>
                     {% else %}
-                        {% if user.is_manager %}
+                        {% if user.role == 'M' %}
                             <li style="float: right; width: 110px;">
                                 <a href="/manager-profile">My Account</a>
                             </li>
                         {% else %}
-                            {% if user.is_trainer %}
+                            {% if user.role == 'T' %}
                                 <li style="float: right; width: 110px;">
                                     <a href="/trainer-profile">My Account</a>
                                 </li>

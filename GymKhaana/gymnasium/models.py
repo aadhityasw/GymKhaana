@@ -61,7 +61,11 @@ class GymClass(models.Model) :
 
 
 class Membership(models.Model) :
-    name = models.ForeignKey('users.CustomUser', on_delete=models.CASCADE, related_name="customer_membership")
+    name = models.ForeignKey(
+        'users.CustomUser', 
+        on_delete=models.CASCADE, 
+        related_name="customer_membership",
+        limit_choices_to={'role' : 'C'})
     deadline = models.DateTimeField()
     package = models.ForeignKey('Package', on_delete=models.CASCADE, related_name="package_for_membership")
     gym_class = models.ForeignKey('GymClass', on_delete=models.CASCADE, related_name="gym_class_for_membership")
@@ -81,7 +85,7 @@ class Notification(models.Model) :
         'users.CustomUser', 
         on_delete=models.CASCADE, 
         related_name="trainer", 
-        limit_choices_to={'is_trainer' : True})
+        limit_choices_to={'role' : 'T'})
     content = models.TextField(max_length=500)
     end_date = models.DateField(verbose_name="Expiry for Notification")
 
@@ -97,7 +101,7 @@ class Announcement(models.Model) :
     account = models.ForeignKey(
         'users.CustomUser',
         on_delete=models.CASCADE,
-        limit_choices_to={'is_manager' : True})
+        limit_choices_to={'role' : 'M'})
     content = models.TextField(max_length=500)
     end_date = models.DateField(verbose_name="Expiry for Notification")
 
