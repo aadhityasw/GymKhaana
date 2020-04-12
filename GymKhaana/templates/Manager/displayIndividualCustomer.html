@@ -1,14 +1,13 @@
-{% extends 'Customer/base.html' %} 
+{% extends 'Manager/base.html' %} 
 {% load static %}
 
 {% block header %}
-    <link rel="stylesheet" href="{% static 'css/Customer/profile.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/Manager/individualCustomer.css' %}" type="text/css">
 {% endblock %}
 
 {% block body %}
     {% if user.is_authenticated %}
-        <h1>Welcome {{ user }}</h1>
-        <h2>Customer Profile</h2>
+        <h2>Customer Profile</h1>
         <table>
             <tr>
                 <th>Username</th>
@@ -75,12 +74,5 @@
                 </td>
             </tr>
         </table>
-        <button>
-            <a href="/edit-customer-profile">Edit Profile</a>
-        </button>
-        <br>
-        <button>
-            <a href="/change-password">Change Password</a>
-        </button>
     {% endif %}
 {% endblock %}

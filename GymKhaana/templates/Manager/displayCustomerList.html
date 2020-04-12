@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block header %}
-    <link rel="stylesheet" href="{% static 'css/Manager/displayCustomerList.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/manager/displayCustomerList.css' %}" type="text/css">
 {% endblock %}
 
 {% block body %}
@@ -18,7 +18,7 @@
                 <tr>
                     <th>{{ forloop.counter|add:"1" }}</th>
                     <td>{{ customer.id }}</td>
-                    <td><a href="#">{{ customer.full_name }}</a></td>
+                    <td><a href="/view-customer/{{ customer.id }}">{{ customer.full_name }}</a></td>
                 </tr>
             {% endfor %}
         </table>

@@ -21,10 +21,6 @@ body{
     margin-left: 20px;
 }
 
-.vio .morewidth{
-    width: 200px;
-}
-
 .vio ul{
     margin: 0px;
     padding: 0px;
@@ -92,7 +88,7 @@ body{
     position: relative;
     margin-bottom: 40px;
     width: 100%;
-    height: fit-content;
+    /*height: fit-content;*/
     padding-bottom: 20px;
     min-height: 80%;
 }
@@ -152,3 +148,7 @@ body{
     margin-bottom: 10px;
   }
 
+h1, h2, h3, h4, h5, h6 {
+    margin: 0px;
+    padding: 0px;
+}

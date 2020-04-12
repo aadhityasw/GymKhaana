@@ -26,4 +26,6 @@ urlpatterns = [
 
     path('view-customer-list/', views.DisplayCustomerList, name='view-customer-list'),
 
+    path('view-customer/<int:cust_id>/', views.DisplayIndividualCustomer, name='view-individual-customer'),
+
 ]

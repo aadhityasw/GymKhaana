@@ -1,132 +1,135 @@
-<head>
-    <meta charset="utf-8">
-    <title>
-        {% block title %} Gym Khaana {% endblock %}
-    </title>
-    {% load static %}
-    <link rel="shortcut icon" href="{%  static 'img/favicon.ico' %}">
-    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/gymnasium/homebase.css' %}" type="text/css">
-    {% block header %} 
-    
-    {% endblock %}
-</head>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>
+            {% block title %} Gym Khaana {% endblock %}
+        </title>
+        {% load static %}
+        <link rel="shortcut icon" href="{%  static 'img/favicon.ico' %}">
+        <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+        <link rel="stylesheet" href="{% static 'css/gymnasium/homebase.css' %}" type="text/css">
+        {% block header %} 
+        
+        {% endblock %}
+    </head>
 
-<body style="margin: auto;">
-    <nav class="vio">
-        <ul>
-            <li style="margin-top: 0px;" class="nohover morewidth">
-                <a href="http://chennai.vit.ac.in/" style="padding: 5px;"><img src="{% static 'img/vitlogo1.png' %}" width="250px" height="90px"></a>
-            </li>
-            <li style="margin-left: 8%" class="nohover morewidth">
-                <a href="/" ><h1 style="color: black; font-size: 35px; margin-top: auto; font-family: forte;">Gym Khaana</h1></a>
-            </li>
-            <li class="nohover" style="width: 50px;">
-                <div></div>
-            </li>
-            <li>
-                <a href="/">Home</a>
-            </li>
-            <li>
-                <a href="#">Fitness</a>
-                <ul>
-                    <li><a href="">Fitness Classes</a></li>
-                    <li><a href="">Personal Training</a></li>
-                    <li><a href="">Become an Instructor</a></li>
-                    <li><a href="">Fitness Polices</a></li>
-                    <li><a href="">Safety</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#">Facilities</a>
-                <ul>
-                    <li><a href="">Hours</a></li>
-                    <li><a href="/aquatics">Aquatics</a></li>
-                    <li><a href="">Wall Climbing</a></li>
-                    <li><a href="">Lockers</a></li>
-                    <li><a href="">In-House Clinics</a></li>
-                </ul>
-            </li>
-            <li style="width: 135px;">
-                <a href="/view-announcements">Announcements</a>
-            </li>
-            <li>
-                <a href="">About</a>
-            </li>
-            <li style="float: right;">
+    <body style="margin: auto;">
+        <nav class="vio">
+            <ul>
+                <li style="margin-top: 0px; width: fit-content;" class="nohover">
+                    <a href="http://chennai.vit.ac.in/" style="padding: 5px;"><img src="{% static 'img/vitlogo1.png' %}" width="250px" height="90px"></a>
+                </li>
+                <li class="nohover" style="width: 2em;"></li>
+                <li class="nohover" style="width: fit-content;">
+                    <a href="/" style="padding: 0%;">
+                        <h1 style="color: black; font-size: 35px; margin: 0em; font-family: forte; padding-top: 1em;">Gym Khaana</h1>
+                    </a>
+                </li>
+                <li class="nohover" style="width: 3em;"></li>
+                <li>
+                    <a href="/">Home</a>
+                </li>
+                <li>
+                    <a href="#">Fitness</a>
+                    <ul>
+                        <li><a href="">Fitness Classes</a></li>
+                        <li><a href="">Personal Training</a></li>
+                        <li><a href="">Become an Instructor</a></li>
+                        <li><a href="">Fitness Polices</a></li>
+                        <li><a href="">Safety</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#">Facilities</a>
+                    <ul>
+                        <li><a href="">Hours</a></li>
+                        <li><a href="/aquatics">Aquatics</a></li>
+                        <li><a href="">Wall Climbing</a></li>
+                        <li><a href="">Lockers</a></li>
+                        <li><a href="">In-House Clinics</a></li>
+                    </ul>
+                </li>
+                <li style="width: 135px;">
+                    <a href="/view-announcements">Announcements</a>
+                </li>
+                <li>
+                    <a href="">About</a>
+                </li>
+                <li style="float: right;">
+                    {% if user.is_authenticated %}
+                        <a href="/logout">Logout</a>
+                    {% else %}
+                        <a href="/login">Login</a>
+                    {% endif %}
+                </li>
                 {% if user.is_authenticated %}
-                    <a href="/logout">Logout</a>
-                {% else %}
-                    <a href="/login">Login</a>
-                {% endif %}
-            </li>
-            {% if user.is_authenticated %}
-                {% if user.is_superuser %}
-                    <li style="float: right; width: 110px;">
-                        <a href="admin">My Account</a>
-                    </li>
-                {% else %}
-                    {% if user.role == 'C' %}
+                    {% if user.is_superuser %}
                         <li style="float: right; width: 110px;">
-                            <a href="/customer-profile">My Account</a>
+                            <a href="admin">My Account</a>
                         </li>
                     {% else %}
-                        {% if user.role == 'M' %}
+                        {% if user.role == 'C' %}
                             <li style="float: right; width: 110px;">
-                                <a href="/manager-profile">My Account</a>
+                                <a href="/customer-profile">My Account</a>
                             </li>
                         {% else %}
-                            {% if user.role == 'T' %}
+                            {% if user.role == 'M' %}
                                 <li style="float: right; width: 110px;">
-                                    <a href="/trainer-profile">My Account</a>
+                                    <a href="/manager-profile">My Account</a>
                                 </li>
+                            {% else %}
+                                {% if user.role == 'T' %}
+                                    <li style="float: right; width: 110px;">
+                                        <a href="/trainer-profile">My Account</a>
+                                    </li>
+                                {% endif %}
                             {% endif %}
                         {% endif %}
                     {% endif %}
                 {% endif %}
-            {% endif %}
-        </ul >
-    </nav>
+            </ul >
+        </nav>
 
 
-    <div class="pagebody">
-        {% block body %} 
-    
-        {% endblock %}
-    </div>
-
-    <div class="footer">
-        <div class="footerleft">
-            <a><u>Contact us:</u></a>
-            <br>
-            <a> 9557144070</a>
-            <br>
-            <a>VIT University </a>
-            <br>
-            <a>Chennai 600203</a>
-            <br>
-            <a>arpitgupta455@gmail.com</a>
+        <div class="pagebody">
+            {% block body %} 
+        
+            {% endblock %}
         </div>
 
-        <div class="footermiddle">
-            <img src="{% static 'img/footer.jpg' %}">
+        <div class="footer">
+            <div class="footerleft">
+                <a><u>Contact us:</u></a>
+                <br>
+                <a> 9557144070</a>
+                <br>
+                <a>VIT University </a>
+                <br>
+                <a>Chennai 600203</a>
+                <br>
+                <a>arpitgupta455@gmail.com</a>
+            </div>
+
+            <div class="footermiddle">
+                <img src="{% static 'img/footer.jpg' %}">
+            </div>
+            
+            <div class="footerright">
+                <a><u>Regular Hours</u></a>
+                <br>
+                <a>Monday – Friday: 6:00 AM – 11:30 PM</a>
+                <br>
+                <a> Saturday: 8:00 AM – 8:00 PM</a>
+                <br>
+                <a> Sunday: 12:00 PM – 11:30 PM</a>
+            </div>
+            
         </div>
         
-        <div class="footerright">
-            <a><u>Regular Hours</u></a>
-            <br>
-            <a>Monday – Friday: 6:00 AM – 11:30 PM</a>
-            <br>
-            <a> Saturday: 8:00 AM – 8:00 PM</a>
-            <br>
-            <a> Sunday: 12:00 PM – 11:30 PM</a>
-        </div>
         
-    </div>
-    
-    
-    <div class="copyright">
-        <p style="margin-top: 10px;">© Copyright - VIT Campus creation </p>
-    </div>
+        <div class="copyright">
+            <p style="margin-top: 10px;">© Copyright - VIT Campus creation </p>
+        </div>
 
-</body>
+    </body>
+</html>

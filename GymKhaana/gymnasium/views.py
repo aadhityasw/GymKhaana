@@ -61,6 +61,9 @@ def AddEquipment(request) :
     return render(request, 'Manager/addEquipment.html', {'add_eqip_form' : form})"""
 
 
+# Customer Pages
+
+
 @login_required
 def DisplayCustomerProfile(request) :
     user_object = CustomUser.objects.get(username=request.user)
@@ -146,6 +149,9 @@ def DisplayAnnouncements(request) :
     return render(request, 'gymnasium/announcement.html', context)
 
 
+# Manager Pages
+
+
 @login_required
 def DisplayManagerProfile(request) :
     user_object = CustomUser.objects.get(username=request.user)
@@ -160,5 +166,16 @@ def DisplayCustomerList(request) :
 
 
 @login_required
-def DisplayIndividualCustomer(request) :
-    pass
+def DisplayIndividualCustomer(request, cust_id) :
+    customer_object = CustomerProfile.objects.get(id=cust_id)
+    membership_object = Membership.objects.get(name=customer_object.account)
+    membership_deadline = membership_object.deadline
+    membership_deadline = membership_deadline.replace(tzinfo=None)
+    if membership_deadline >= datetime.datetime.now(tz=None) :
+        membership_status = "Active"
+    else :
+        membership_status = "Inactive"
+    context = {'customer' : customer_object, 'membership_status' : membership_status, 'membership' : membership_object}
+    return render(request, 'Manager/displayIndividualCustomer.html', context)
+
+
