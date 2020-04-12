@@ -7,18 +7,18 @@
 
 {% block body %}
     {% if user.is_authenticated %}
-        <h1>Manager List</h1>
+        <h1>Trainer List</h1>
         <table>
             <tr>
                 <th>Sno</th>
                 <th>User ID</th>
                 <th>Name</th>
             </tr>
-            {% for manager in managers %}
+            {% for admin_user in admin_users %}
                 <tr>
                     <th>{{ forloop.counter }}</th>
-                    <td>{{ manager.account.id }}</td>
-                    <td><a href="/view-manager/{{ manager.id }}/">{{ manager.full_name }}</a></td>
+                    <td>{{ admin_user.id }}</td>
+                    <td><a href="/view-admin/{{ admin_user.id }}/">{{ admin_user.first_name }} {{ admin_user.last_name }}</a></td>
                 </tr>
             {% endfor %}
         </table>

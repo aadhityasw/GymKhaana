@@ -1,0 +1,72 @@
+{% extends 'Trainer/base.html' %} 
+{% load static %}
+
+{% block header %}
+    <link rel="stylesheet" href="{% static 'css/user/profile.css' %}" type="text/css">
+{% endblock %}
+
+{% block body %}
+    {% if user.is_authenticated %}
+        <h1>Welcome {{ user }}</h1>
+        <h2>Trainer Profile</h2>
+        <table>
+            <tr>
+                <th>Username</th>
+                <td>{{ trainer.account.username }}</td>
+            </tr>
+            <tr>
+                <th>Full Name</th>
+                <td>{{ trainer.full_name }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ trainer.account.email }}</td>
+            </tr>
+            <tr>
+                <th>Phone</th>
+                <td>{{ trainer.mobile }}</td>
+            </tr>
+            <tr>
+                <th>Address</th>
+                <td>{{ trainer.address }}</td>
+            </tr>
+            <tr>
+                <th>Gender</th>
+                <td>{{ trainer.gender }}</td>
+            </tr>
+            <tr>
+                <th>Age</th>
+                <td>{{ trainer.age }}</td>
+            </tr>
+            <tr>
+                <th>Weight</th>
+                <td>{{ trainer.weight }}</td>
+            </tr>
+            <tr>
+                <th>Medical History</th>
+                <td>{{ trainer.medical_history }}</td>
+            </tr>
+            <tr>
+                <th>Gym Classes</th>
+                <td>
+                    {% if num_gym_class == 0 %}
+                        <h1>No Class Allocated</h1>
+                    {% else %}
+                        <ul>
+                            {% for class in trainer.gym_class %}
+                                <li>{{ class }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+        <button>
+            <a href="/edit-trainer-profile">Edit Profile</a>
+        </button>
+        <br>
+        <button>
+            <a href="/change-password">Change Password</a>
+        </button>
+    {% endif %}
+{% endblock %}

@@ -15,7 +15,7 @@ class CustomUser(AbstractUser) :
 
 
 class CustomerProfile(models.Model) :
-    account = models.ForeignKey('CustomUser', on_delete=models.CASCADE, related_name="profile", limit_choices_to={'role' : 'C'})
+    account = models.ForeignKey('CustomUser', on_delete=models.CASCADE, related_name="customer_profile_account", limit_choices_to={'role' : 'C'})
     full_name = models.CharField(max_length=100, null=False, blank=False, verbose_name="Full Name", default='-')
     mobile = models.IntegerField(null=False, blank=False)
     medical_history = models.TextField(max_length=1000, blank=False)
@@ -24,9 +24,9 @@ class CustomerProfile(models.Model) :
     weight = models.IntegerField(null=False, blank=False)
     allergies = models.TextField(max_length=500)
     address = models.TextField(max_length=500)
-    gym_package = models.ForeignKey('gymnasium.Package', on_delete=models.CASCADE, related_name="subscribed_package")
-    gym_class = models.ForeignKey('gymnasium.GymClass', on_delete=models.CASCADE, related_name="registered_class", null=True, blank=True)
-    equipment_interest = models.ManyToManyField(Equipmenttype, related_name="equipment_interest")
+    gym_package = models.ForeignKey('gymnasium.Package', on_delete=models.CASCADE, related_name="customer_profile_for_package")
+    gym_class = models.ForeignKey('gymnasium.GymClass', on_delete=models.CASCADE, related_name="customer_profile_for_gym_class", null=True, blank=True)
+    equipment_interest = models.ManyToManyField(Equipmenttype, related_name="customer_profile_for_equipment_interest")
 
     def __str__(self):
         return str(self.full_name)
@@ -52,7 +52,7 @@ class TrainerProfile(models.Model) :
     address = models.TextField(max_length=500)
     age = models.IntegerField(null=False, blank=False)
     medical_history = models.TextField(max_length=1000, blank=True)
-    gym_class = models.ForeignKey('gymnasium.GymClass', on_delete=models.CASCADE, related_name="allocated_class", null=True, blank=True)
+    gym_class = models.ManyToManyField('gymnasium.GymClass', related_name="allocated_trainers", blank=True)
 
     def __str__(self):
         return str(self.full_name)

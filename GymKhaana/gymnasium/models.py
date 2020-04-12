@@ -48,7 +48,7 @@ class Package(models.Model) :
 
 class GymClass(models.Model) :
     name = models.CharField(max_length=200)
-    package_name = models.ForeignKey('Package', on_delete=models.CASCADE, related_name="package_for_class")
+    package_name = models.ForeignKey('Package', on_delete=models.CASCADE, related_name="gym_class_for_package")
     timings = models.CharField(max_length=100)
 
     class Meta:
@@ -67,8 +67,8 @@ class Membership(models.Model) :
         related_name="customer_membership",
         limit_choices_to={'role' : 'C'})
     deadline = models.DateTimeField()
-    package = models.ForeignKey('Package', on_delete=models.CASCADE, related_name="package_for_membership")
-    gym_class = models.ForeignKey('GymClass', on_delete=models.CASCADE, related_name="gym_class_for_membership")
+    package = models.ForeignKey('Package', on_delete=models.CASCADE, related_name="membership_for_package")
+    gym_class = models.ForeignKey('GymClass', on_delete=models.CASCADE, related_name="membership_for_gym_class")
 
     class Meta :
         verbose_name = "Membership"
@@ -80,12 +80,14 @@ class Membership(models.Model) :
 
 
 class Notification(models.Model) :
-    gym_class = models.ManyToManyField(GymClass, related_name="gym_class_for_notification")
-    trainer = models.ForeignKey(
+    gym_class = models.ManyToManyField(GymClass, related_name="notification_for_gym_class")
+    author = models.ForeignKey(
         'users.CustomUser', 
         on_delete=models.CASCADE, 
         related_name="trainer", 
-        limit_choices_to={'role' : 'T'})
+        limit_choices_to=
+            models.Q(role='T') | models.Q(role='M') | models.Q(role='A')
+        )
     content = models.TextField(max_length=500)
     end_date = models.DateField(verbose_name="Expiry for Notification")
 
@@ -94,7 +96,7 @@ class Notification(models.Model) :
         verbose_name_plural = "Notifications"
 
     def __str__(self):
-        return (str(self.trainer))
+        return (str(self.author))
 
 
 class Announcement(models.Model) :

@@ -4,11 +4,15 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
+from django.db import models
 
-from .forms import EquipmentForm, NotificationForm
 from users.models import CustomUser, CustomerProfile, TrainerProfile, ManagerProfile
 from .models import Membership, Package, Notification, Equipmenttype, Announcement
 import datetime
+
+
+# General Website Pages
+
 
 def HomePage(request) :
     return render(request, 'gymnasium/home.html')
@@ -49,26 +53,16 @@ def changePassword(request) :
     })
 
 
-"""@login_required
-def AddEquipment(request) :
-    if request.method == 'POST':  # data sent by user
-        form = EquipmentForm(request.POST)
-        if form.is_valid():
-            form.save()  # this will save the details to database
-            return HttpResponse('Project details added to database')
-    else:  # display empty form
-        form = EquipmentForm()
-    return render(request, 'Manager/addEquipment.html', {'add_eqip_form' : form})"""
-
-
 # Customer Pages
 
 
 @login_required
 def DisplayCustomerProfile(request) :
     user_object = CustomUser.objects.get(username=request.user)
-    customer_profile_object = CustomerProfile.objects.get(account=user_object)
-    membership_object = Membership.objects.get(name=user_object)
+    """customer_profile_object = CustomerProfile.objects.get(account=user_object)
+    membership_object = Membership.objects.get(name=user_object)"""
+    customer_profile_object = user_object.customer_profile_account.get()
+    membership_object = user_object.customer_membership.get()
     membership_deadline = membership_object.deadline
     membership_deadline = membership_deadline.replace(tzinfo=None)
     if membership_deadline >= datetime.datetime.now(tz=None) :
@@ -81,9 +75,11 @@ def DisplayCustomerProfile(request) :
 @login_required
 def ChangeCustomerProfile(request) :
     user_object = CustomUser.objects.get(username=request.user)
-    customer_profile_object = CustomerProfile.objects.get(account=user_object)
+    """customer_profile_object = CustomerProfile.objects.get(account=user_object)"""
+    customer_profile_object = user_object.customer_profile_account.get()
     if request.method == 'POST' :
         user_object.email = request.POST['email']
+        customer_profile_object.full_name = request.POST['full_name']
         customer_profile_object.mobile = request.POST['mobile']
         customer_profile_object.address = request.POST['address']
         customer_profile_object.age = request.POST['age']
@@ -131,16 +127,6 @@ def DisplayNotification(request) :
     return render(request, 'Customer/displayNotification.html', context)
 
 
-"""def PostNotification(request) :
-    if request.method == 'POST' :
-        form = NotificationForm(request.POST)
-        if form.is_valid() :
-            form.save()
-    else :
-        form = NotificationForm()
-    return render(request, 'Manager/postNotification.html', {'new_notification_form' : form})"""
-
-
 def DisplayAnnouncements(request) :
     Announcement.objects.filter(end_date__lt=datetime.date.today()).delete()
     announcement_objects = Announcement.objects.all()
@@ -149,14 +135,66 @@ def DisplayAnnouncements(request) :
     return render(request, 'gymnasium/announcement.html', context)
 
 
+# Trainer Pages
+
+
+@login_required
+def DisplayTrainerProfile(request) :
+    user_object = CustomUser.objects.get(username=request.user)
+    trainer_profile_object = user_object.trainer_profile_account.get()
+    num_gym_class = len(trainer_profile_object.gym_class.all())
+    return render(request, 'Trainer/profile.html', {'trainer' : trainer_profile_object, 'num_gym_class' : num_gym_class})
+
+
+@login_required
+def ChangeTrainerProfile(request) :
+    user_object = CustomUser.objects.get(username=request.user)
+    trainer_profile_object = user_object.trainer_profile_account.get()
+    if request.method == 'POST' :
+        user_object.email = request.POST['email']
+        trainer_profile_object.full_name = request.POST['full_name']
+        trainer_profile_object.mobile = request.POST['mobile']
+        trainer_profile_object.address = request.POST['address']
+        trainer_profile_object.age = request.POST['age']
+        trainer_profile_object.medical_history = request.POST['medical_history']
+        trainer_profile_object.gender = request.POST['gender']
+        user_object.save()
+        trainer_profile_object.save()
+        messages.success(request, 'Details entered have been updated.')
+        return redirect('/trainer-profile')
+    else :
+        return render(request, 'Trainer/updateTrainer.html', {'trainer' : trainer_profile_object})
+
+
+
 # Manager Pages
 
 
 @login_required
 def DisplayManagerProfile(request) :
     user_object = CustomUser.objects.get(username=request.user)
-    manager_profile_object = ManagerProfile.objects.get(account=user_object)
+    """manager_profile_object = ManagerProfile.objects.get(account=user_object)"""
+    manager_profile_object = user_object.manager_profile_account.get()
     return render(request, 'Manager/profile.html', {'manager' : manager_profile_object})
+
+
+@login_required
+def ChangeManagerProfile(request) :
+    user_object = CustomUser.objects.get(username=request.user)
+    manager_profile_object = user_object.manager_profile_account.get()
+    if request.method == 'POST' :
+        user_object.email = request.POST['email']
+        manager_profile_object.full_name = request.POST['full_name']
+        manager_profile_object.mobile = request.POST['mobile']
+        manager_profile_object.address = request.POST['address']
+        manager_profile_object.age = request.POST['age']
+        manager_profile_object.gender = request.POST['gender']
+        user_object.save()
+        manager_profile_object.save()
+        messages.success(request, 'Details entered have been updated.')
+        return redirect('/manager-profile')
+    else :
+        return render(request, 'Manager/updateManager.html', {'manager' : manager_profile_object})
 
 
 @login_required
@@ -179,3 +217,45 @@ def DisplayIndividualCustomer(request, cust_id) :
     return render(request, 'Manager/displayIndividualCustomer.html', context)
 
 
+@login_required
+def DisplayTrainerList(request) :
+    trainer_objects = TrainerProfile.objects.all()
+    return render(request, 'Manager/displayTrainerList.html', {'trainers' : trainer_objects})
+
+
+@login_required
+def DisplayIndividualTrainer(request, tra_id) :
+    trainer_object = TrainerProfile.objects.get(id=tra_id)
+    num_gym_class = len(trainer_object.gym_class.all())
+    return render(request, 'Manager/displayIndividualTrainer.html', {'trainer' : trainer_object, 'num_gym_class' : num_gym_class})
+
+
+@login_required
+def DisplayManagerList(request) :
+    manager_objects = ManagerProfile.objects.all()
+    return render(request, 'Manager/displayManagerList.html', {'managers' : manager_objects})
+
+
+@login_required
+def DisplayIndividualManager(request, man_id) :
+    # man_id is the id in the Manager Profile table
+    manager_profile_object = ManagerProfile.objects.get(id=man_id)
+    """print(man_id)
+    print(request.user.manager_profile_account.all()[0].id)"""
+    # If it is the currently logged in user
+    if man_id == request.user.manager_profile_account.all()[0].id :
+        return redirect('/manager-profile')
+    # In all other cases
+    return render(request, 'Manager/displayIndividualManager.html', {'manager' : manager_profile_object})
+
+
+@login_required
+def DisplayAdminList(request) :
+    admin_user_objects = CustomUser.objects.filter(models.Q(is_superuser=True) | models.Q(role='A'))
+    return render(request, 'Manager/displayAdminList.html', {'admin_users' : admin_user_objects})
+
+
+@login_required
+def DisplayIndividualAdmin(request, adm_id) :
+    admin_user_object = CustomUser.objects.get(id=adm_id)
+    return render(request, 'Manager/displayIndividualAdmin.html', {'admin_user' : admin_user_object})

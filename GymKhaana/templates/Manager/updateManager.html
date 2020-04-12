@@ -1,0 +1,81 @@
+{% extends 'Manager/base.html' %} 
+{% load static %}
+
+{% block header %}
+    <link rel="stylesheet" href="{% static 'css/user/updateUser.css' %}" type="text/css">
+{% endblock %}
+
+{% block body %}
+    {% if user.is_authenticated %}
+        <h1>Welcome {{ user }}</h1>
+        <h2>Edit Manager Profile</h1>
+        <form method="post">
+            {% csrf_token %}
+            <table>
+                <tr>
+                    <th>Full Name</th>
+                    <td>
+                        <input type="text" name="full_name" id="full_name" value="{{ manager.full_name }}">
+                    </td>
+                </tr>
+                <tr>
+                    <th>Phone</th>
+                    <td>
+                        <input type="tel" name="mobile" id="mobile" value="{{ manager.mobile }}">
+                    </td>
+                </tr>
+                <tr>
+                    <th>Email</th>
+                    <td>
+                        <input type="email" name="email" id="email" value="{{ manager.account.email }}">
+                    </td>
+                </tr>
+                <tr>
+                    <th>Address</th>
+                    <td>
+                        <textarea name="address" id="address" cols="30" rows="10">
+                            {{ manager.address }}
+                        </textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Gender</th>
+                    <td>
+                        <select name="gender" id="gender">
+                            <option value="M" 
+                                {% if manager.gender == "M" %}
+                                    selected
+                                {% endif %} >
+                                Male
+                            </option>
+                            <option value="F"
+                                {% if manager.gender == "F" %}
+                                    selected
+                                {% endif %}>
+                                Female
+                            </option>
+                            <option value="O"
+                                {% if manager.gender == "O" %}
+                                    selected
+                                {% endif %}>
+                                Other
+                            </option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Age</th>
+                    <td>
+                        <input type="number" name="age" id="age" value="{{ manager.age }}">
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <button type="submit">Update Details</button>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    {% endif %}
+{% endblock %}

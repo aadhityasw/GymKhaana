@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block header %}
-    <link rel="stylesheet" href="{% static 'css/Manager/profile.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/user/profile.css' %}" type="text/css">
 {% endblock %}
 
 {% block body %}
@@ -13,6 +13,10 @@
             <tr>
                 <th>Name</th>
                 <td>{{ manager.account.username }}</td>
+            </tr>
+            <tr>
+                <th>Full Name</th>
+                <td>{{ manager.full_name }}</td>
             </tr>
             <tr>
                 <th>Email</th>

@@ -1,0 +1,26 @@
+{% extends 'Manager/base.html' %} 
+{% load static %}
+
+{% block header %}
+    <link rel="stylesheet" href="{% static 'css/user/displayIndividualUser.css' %}" type="text/css">
+{% endblock %}
+
+{% block body %}
+    {% if user.is_authenticated %}
+        <h2>Administrator Profile</h1>
+        <table>
+            <tr>
+                <th>Username</th>
+                <td>{{ admin_user.username }}</td>
+            </tr>
+            <tr>
+                <th>Full Name</th>
+                <td>{{ admin_user.first_name }}  {{ admin_user.last_name }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ admin_user.email }}</td>
+            </tr>
+        </table>
+    {% endif %}
+{% endblock %}

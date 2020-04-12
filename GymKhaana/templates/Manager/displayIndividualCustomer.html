@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block header %}
-    <link rel="stylesheet" href="{% static 'css/Manager/individualCustomer.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/user/displayIndividualUser.css' %}" type="text/css">
 {% endblock %}
 
 {% block body %}
@@ -57,6 +57,10 @@
                 <tr>
                     <th>Gym Package</th>
                     <td>{{ customer.gym_package }}</td>
+                </tr>
+                <tr>
+                    <th>Gym Class</th>
+                    <td>{{ customer.gym_class }}</td>
                 </tr>
                 <tr>
                     <th>Membership Deadline</th>
