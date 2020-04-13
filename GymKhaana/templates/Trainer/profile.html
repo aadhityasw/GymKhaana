@@ -53,7 +53,7 @@
                         <h1>No Class Allocated</h1>
                     {% else %}
                         <ul>
-                            {% for class in trainer.gym_class %}
+                            {% for class in trainer.gym_class.all %}
                                 <li>{{ class }}</li>
                             {% endfor %}
                         </ul>

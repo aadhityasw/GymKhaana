@@ -4,10 +4,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
+from django.core.exceptions import PermissionDenied
 from django.db import models
 
 from users.models import CustomUser, CustomerProfile, TrainerProfile, ManagerProfile
-from .models import Membership, Package, Notification, Equipmenttype, Announcement
+from .models import Membership, Package, Notification, Equipmenttype, Announcement, GymClass
 import datetime
 
 
@@ -24,6 +25,14 @@ def FitnessClasses(request) :
 
 def Aquatics(request) :
     return render(request, 'gymnasium/aquatics.html')
+
+
+def DisplayAnnouncements(request) :
+    Announcement.objects.filter(end_date__lt=datetime.date.today()).delete()
+    announcement_objects = Announcement.objects.all()
+    num_announcements = len(announcement_objects)
+    context = {'num_announcements' : num_announcements, 'announcements' : announcement_objects}
+    return render(request, 'gymnasium/announcement.html', context)
 
 
 @login_required
@@ -104,9 +113,9 @@ def ChangeCustomerProfile(request) :
 
 
 @login_required
-def DisplayNotification(request) :
+def DisplayCustomerNotification(request) :
     # To delete the expired notifications from the database
-    Notification.objects.filter(end_date__lt=datetime.date.today()).delete()
+    Notification.objects.filter(expiry__lt=datetime.datetime.now()).delete()
     # To display the active notifications
     user_object = CustomUser.objects.get(username=request.user)
     customer_profile_object = CustomerProfile.objects.get(account=user_object)
@@ -115,7 +124,8 @@ def DisplayNotification(request) :
     num_notifications = len(notification_objects)
     context = {'num_notifications' : num_notifications, 'notifications' : notification_objects}
     if user_object.role == 'C' :
-        membership_object = Membership.objects.get(name=user_object)
+        """membership_object = Membership.objects.get(name=user_object)"""
+        membership_object = user_object.customer_membership.get()
         membership_deadline = membership_object.deadline
         membership_deadline = membership_deadline.replace(tzinfo=None)
         days_left = (membership_deadline - datetime.datetime.now(tz=None)).days
@@ -124,15 +134,7 @@ def DisplayNotification(request) :
             context['days_left_expiry'] = days_left
         else :
             context['membership_deadline_near'] = False
-    return render(request, 'Customer/displayNotification.html', context)
-
-
-def DisplayAnnouncements(request) :
-    Announcement.objects.filter(end_date__lt=datetime.date.today()).delete()
-    announcement_objects = Announcement.objects.all()
-    num_announcements = len(announcement_objects)
-    context = {'num_announcements' : num_announcements, 'announcements' : announcement_objects}
-    return render(request, 'gymnasium/announcement.html', context)
+    return render(request, 'Customer/displayCustomerNotification.html', context)
 
 
 # Trainer Pages
@@ -206,7 +208,9 @@ def DisplayCustomerList(request) :
 @login_required
 def DisplayIndividualCustomer(request, cust_id) :
     customer_object = CustomerProfile.objects.get(id=cust_id)
-    membership_object = Membership.objects.get(name=customer_object.account)
+    user_object = customer_object.account
+    """membership_object = Membership.objects.get(name=customer_object.account)"""
+    membership_object = user_object.customer_membership.get()
     membership_deadline = membership_object.deadline
     membership_deadline = membership_deadline.replace(tzinfo=None)
     if membership_deadline >= datetime.datetime.now(tz=None) :
@@ -259,3 +263,118 @@ def DisplayAdminList(request) :
 def DisplayIndividualAdmin(request, adm_id) :
     admin_user_object = CustomUser.objects.get(id=adm_id)
     return render(request, 'Manager/displayIndividualAdmin.html', {'admin_user' : admin_user_object})
+
+
+# Pages common to Trainer and Manager
+
+
+@login_required
+def DisplayNotificationList(request) :
+    # To delete the expired notifications from the database
+    Notification.objects.filter(expiry__lt=datetime.datetime.now()).delete()
+    # To display the active notifications
+    if request.user.role == 'T' :
+        notification_objects = Notification.objects.filter(author=request.user)
+        num_notifications = len(notification_objects)
+        base_template = 'Trainer/base.html'
+    elif request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+        notification_objects = Notification.objects.all()
+        num_notifications = len(notification_objects)
+        base_template = 'Manager/base.html'
+    else :
+        raise PermissionDenied()
+        """return redirect('/')"""
+    context = {'notifications' : notification_objects, 'num_notifications' : num_notifications, 'base_template' : base_template}
+    return render(request, 'notification/displayNotificationList.html', context)
+
+
+@login_required
+def EditIndividualNotification(request, not_id) :
+    notification_object = Notification.objects.get(id=not_id)
+    if request.method == 'POST' :
+        if request.user.role == 'T' and request.user != notification_object.author :
+            raise PermissionDenied()
+        elif request.user.role == 'T' or request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+            notification_object.content = request.POST['content']
+            # Format the recieved date time string into a datetime object that will be saved.
+            expiry_date_time = datetime.datetime.strptime(request.POST['expiry'].replace('.', '') , '%B %d, %Y, %I:%M %p')
+            notification_object.expiry = expiry_date_time.replace(tzinfo=None)
+            gym_class_names = request.POST.getlist('gym_class')
+            gym_classes = []
+            for gym_class_itr in gym_class_names :
+                gym_classes.append(GymClass.objects.get(name=gym_class_itr))
+            notification_object.gym_class.set(gym_classes)
+            notification_object.save()
+            messages.success(request, 'Details entered have been updated.') 
+            return redirect('/view-all-notifications')
+        else :
+            raise PermissionDenied()
+    else :
+        if request.user.role == 'T' and request.user != notification_object.author :
+                raise PermissionDenied()
+        elif request.user.role == 'T' :
+            gym_classes = request.user.trainer_profile_account.get().gym_class.all()
+            base_template = 'Trainer/base.html'
+            return render(request, 'notification/editIndividualNotification.html', {'notification' : notification_object, 'gym_classes' : gym_classes, 'base_template' : base_template})
+        elif request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+            gym_classes = GymClass.objects.all()
+            base_template = 'Manager/base.html'
+            return render(request, 'notification/editIndividualNotification.html', {'notification' : notification_object, 'gym_classes' : gym_classes, 'base_template' : base_template})
+        else :
+            raise PermissionDenied()
+
+
+@login_required
+def PostNotification(request) :
+    if request.method == 'POST' :
+        notification_content = request.POST['content']
+        notification_expiry = datetime.datetime.strptime(request.POST['expiry'].replace('.', '') , '%B %d, %Y, %I:%M %p')
+        notification_expiry = notification_expiry.replace(tzinfo=None)
+        gym_class_names = request.POST.getlist('gym_class')
+        gym_classes = []
+        for gym_class_itr in gym_class_names :
+            gym_classes.append(GymClass.objects.get(name=gym_class_itr))
+        notification_object = Notification.objects.create(author=request.user, content=notification_content, expiry=notification_expiry)
+        notification_object.gym_class.set(gym_classes)
+        notification_object.save()
+        if notification_object.id :
+            messages.success(request, 'A notification with the specfied details has been posted.') 
+            return redirect('/view-all-notifications')
+        else :
+            messages.error(request, 'An Error occured while posting the notification.')
+    else :
+        if request.user.role == 'T' :
+            gym_classes = request.user.trainer_profile_account.get().gym_class.all()
+            base_template = 'Trainer/base.html'
+        elif request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+            gym_classes = GymClass.objects.all()
+            base_template = 'Manager/base.html'
+        else :
+            raise PermissionDenied()
+            return
+        return render(request, 'notification/postNotification.html', {'gym_classes' : gym_classes, 'base_template' : base_template})
+
+
+@login_required
+def DeleteIndividualNotification(request, not_id) :
+    notification_object = Notification.objects.get(id=not_id)
+    if request.method == 'POST' :
+        if request.user.role == 'T' and request.user != notification_object.author :
+            raise PermissionDenied()
+        elif request.user.role == 'T' or request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+            notification_object.delete()
+            messages.success(request, 'Details entered have been updated.') 
+            return redirect('/view-all-notifications')
+        else :
+            raise PermissionDenied()
+    else :
+        if request.user.role == 'T' and request.user != notification_object.author :
+                raise PermissionDenied()
+        elif request.user.role == 'T' :
+            base_template = 'Trainer/base.html'
+            return render(request, 'notification/deleteNotification.html', {'notification' : notification_object, 'base_template' : base_template})
+        elif request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+            base_template = 'Manager/base.html'
+            return render(request, 'notification/deleteNotification.html', {'notification' : notification_object, 'base_template' : base_template})
+        else :
+            raise PermissionDenied()

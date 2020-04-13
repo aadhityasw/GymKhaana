@@ -1,0 +1,55 @@
+{% extends base_template %} 
+{% load static %}
+
+{% block header %}
+    <link rel="stylesheet" href="{% static 'css/notification/displayNotificationList.css' %}" type="text/css">
+{% endblock %}
+
+{% block body %}
+    {% if user.is_authenticated %}
+        <h1>Welcome {{ user }}</h1>
+        <h2>Notification Center</h2>
+        {% if num_notifications == 0 %}
+            <h1>There are no active notifications avalible.</h1>
+        {% else %}
+            <table>
+                <tr>
+                    <th>Sno</th>
+                    <th>Notification Content</th>
+                    <th>Author</th>
+                    <th>Gym Class Concerned</th>
+                </tr>
+                {% for notification in notifications %}
+                    <tr>
+                        <th>{{ forloop.counter }}</th>
+                        <td>{{ notification.content }}</td>
+                        <td>
+                            {% if notification.author.role == 'M' %}
+                                {{ notification.author.manager_profile_account.get.full_name }}
+                            {% else %}
+                                {% if notification.author.role == 'T' %}
+                                    {{ notification.author.trainer_profile_account.get.full_name }}
+                                {% else %}
+                                    {{ notification.author }}
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                        <td>
+                            <ul>
+                                {% for gym_class_itr in notification.gym_class.all %}
+                                    <li>{{ gym_class_itr.name }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                        <td>
+                            <button><a href="/edit-notification/{{ notification.id }}">Edit</a></button>
+                        </td>
+                        <td>
+                            <button><a href="/delete-notification/{{ notification.id }}">Delete</a></button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+    {% endif %}
+{% endblock %}

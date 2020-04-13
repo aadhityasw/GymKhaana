@@ -22,7 +22,7 @@
                     <tr>
                         <th>{{ forloop.counter }}</th>
                         <td>{{ notification.content }}</td>
-                        <td>{{ notification }}</td>
+                        <td>{{ notification.author }}</td>
                     </tr>
                 {% endfor %}
                 {% if membership_deadline_near %}

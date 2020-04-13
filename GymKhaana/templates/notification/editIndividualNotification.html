@@ -1,0 +1,71 @@
+{% extends base_template %} 
+{% load static %}
+
+{% block header %}
+    <link rel="stylesheet" href="{% static 'css/notification/editNotification.css' %}" type="text/css">
+{% endblock %}
+
+{% block body %}
+    {% if user.is_authenticated %}
+        <h1>Welcome {{ user }}</h1>
+        <h2>Edit Notification</h2>
+        <form method="post">
+            {% csrf_token %}
+            <table>
+                <tr>
+                    <th>Author</th>
+                    <th>
+                        {% if notification.author.role == 'M' %}
+                            {{ notification.author.manager_profile_account.get.full_name }}
+                        {% else %}
+                            {% if notification.author.role == 'T' %}
+                                {{ notification.author.trainer_profile_account.get.full_name }}
+                            {% else %}
+                                {{ notification.author }}
+                            {% endif %}
+                        {% endif %}
+                    </th>
+                </tr>
+                <tr>
+                    <th>Content</th>
+                    <td>
+                        <textarea name="content" id="content" cols="30" rows="10">
+                            {{ notification.content }}
+                        </textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Expiry</th>
+                    <td>
+                        <input style="width: 15em;" type="datetime" name="expiry" id="expiry" value="{{ notification.expiry }}">
+                    </td>
+                </tr>
+                <tr>
+                    <th>Gym Classes</th>
+                    <td>
+                        <fieldset>
+                            <legend>Gym classes</legend>
+                            {% for gc in gym_classes %}
+                                <input
+                                    type="checkbox"
+                                    id="{{ gc.name }}"
+                                    name="gym_class"
+                                    value="{{ gc.name }}"
+                                    {% if gc in notification.gym_class.all %}
+                                        checked
+                                    {% endif %}
+                                >
+                                <label for="{{ gc.name }}">{{ gc.name }}</label>
+                                <br>
+                            {% endfor %}
+                        </fieldset>
+                    </td>
+                </tr>
+                <tr>
+                    <td><button><a href="/delete-notification/{{ notification.id }}">Delete</a></button></td>
+                    <td><input type="submit" value="Submit"></td>
+                </tr>
+            </table>
+        </form>
+    {% endif %}
+{% endblock %}

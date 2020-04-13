@@ -1,0 +1,55 @@
+{% extends base_template %} 
+{% load static %}
+
+{% block header %}
+    <link rel="stylesheet" href="{% static 'css/notification/deleteNotification.css' %}" type="text/css">
+{% endblock %}
+
+{% block body %}
+    {% if user.is_authenticated %}
+        <h1>Welcome {{ user }}</h1>
+        <h2>Delete Notification :</h2>
+        <h3>Are you sure about deleting this notification? </h3>
+        <form method="post">
+            {% csrf_token %}
+            <table>
+                <tr>
+                    <th>Author</th>
+                    <th>
+                        {% if notification.author.role == 'M' %}
+                            {{ notification.author.manager_profile_account.get.full_name }}
+                        {% else %}
+                            {% if notification.author.role == 'T' %}
+                                {{ notification.author.trainer_profile_account.get.full_name }}
+                            {% else %}
+                                {{ notification.author }}
+                            {% endif %}
+                        {% endif %}
+                    </th>
+                </tr>
+                <tr>
+                    <th>Content</th>
+                    <td><p>{{ notification.content }}</p> </td>
+                </tr>
+                <tr>
+                    <th>Expiry</th>
+                    <td>{{ notification.expiry }}</td>
+                </tr>
+                <tr>
+                    <th>Gym Classes</th>
+                    <td>
+                        <ul>
+                            {% for gc in notification.gym_class.all %}
+                                <li>{{ gc.name }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td><button><a href="/view-all-notifications">Cancel</a></button></td>
+                    <td><input type="submit" value="Delete"></td>
+                </tr>
+            </table>
+        </form>
+    {% endif %}
+{% endblock %}

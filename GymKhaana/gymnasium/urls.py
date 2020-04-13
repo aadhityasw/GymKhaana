@@ -5,6 +5,7 @@ from django.conf.urls import url
 
 urlpatterns = [
     # Base Link
+    
     path('', views.HomePage, name='home-page'),
 
     # Registration Based Links
@@ -27,7 +28,7 @@ urlpatterns = [
 
     path('edit-customer-profile/', views.ChangeCustomerProfile, name='edit-customer-profile'),
 
-    path('view-notifications/', views.DisplayNotification, name='display-notification'),
+    path('view-notifications/', views.DisplayCustomerNotification, name='display-notification'),
 
     # Trainer Website Links
 
@@ -56,5 +57,15 @@ urlpatterns = [
     path('view-admin-list/', views.DisplayAdminList, name='view-admin-list'),
 
     path('view-admin/<int:adm_id>/', views.DisplayIndividualAdmin, name='view-individual-admin'),
+
+    # Links common to Manager and Trainer
+
+    path('view-all-notifications/', views.DisplayNotificationList, name='view-my-notifications'),
+
+    path('edit-notification/<int:not_id>/', views.EditIndividualNotification, name='edit-notification'),
+
+    path('post-notification/', views.PostNotification, name='post-notification'),
+
+    path('delete-notification/<int:not_id>/', views.DeleteIndividualNotification, name='delete-notification'),
 
 ]

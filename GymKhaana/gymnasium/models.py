@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 class Equipmenttype(models.Model) :
     name = models.CharField(max_length=200)
@@ -89,14 +90,15 @@ class Notification(models.Model) :
             models.Q(role='T') | models.Q(role='M') | models.Q(role='A')
         )
     content = models.TextField(max_length=500)
-    end_date = models.DateField(verbose_name="Expiry for Notification")
+    # end_date = models.DateField(verbose_name="Expiry for Notification")
+    expiry = models.DateTimeField(verbose_name="Expiry for Notification", default=timezone.now)
 
     class Meta :
         verbose_name = "Notification"
         verbose_name_plural = "Notifications"
 
     def __str__(self):
-        return (str(self.author))
+        return (str(self.id))
 
 
 class Announcement(models.Model) :
