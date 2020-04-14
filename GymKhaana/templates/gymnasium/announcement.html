@@ -15,8 +15,8 @@
             </tr>
             {% for announcement in announcements %}
                 <tr>
-                    <th>{{ forloop.counter|add:"1" }}</th>
-                    <td>{{ announcement }}</td>
+                    <th>{{ forloop.counter }}</th>
+                    <td>{{ announcement.content }}</td>
                 </tr>
             {% endfor %}
         </table>

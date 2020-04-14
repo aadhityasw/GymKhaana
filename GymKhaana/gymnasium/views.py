@@ -28,10 +28,10 @@ def Aquatics(request) :
 
 
 def DisplayAnnouncements(request) :
-    Announcement.objects.filter(end_date__lt=datetime.date.today()).delete()
+    Announcement.objects.filter(expiry__lt=datetime.datetime.now()).delete()
     announcement_objects = Announcement.objects.all()
     num_announcements = len(announcement_objects)
-    context = {'num_announcements' : num_announcements, 'announcements' : announcement_objects}
+    context = {'num_announcement' : num_announcements, 'announcements' : announcement_objects}
     return render(request, 'gymnasium/announcement.html', context)
 
 
@@ -265,6 +265,80 @@ def DisplayIndividualAdmin(request, adm_id) :
     return render(request, 'Manager/displayIndividualAdmin.html', {'admin_user' : admin_user_object})
 
 
+@login_required
+def DisplayAnnouncementList(request) :
+    # To delete the expired Announcements from the database
+    Announcement.objects.filter(expiry__lt=datetime.datetime.now()).delete()
+    # To display the active Announcements
+    if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+        announcement_objects = Announcement.objects.all()
+        num_announcements = len(announcement_objects)
+    else :
+        raise PermissionDenied()
+    context = {'announcements' : announcement_objects, 'num_announcements' : num_announcements}
+    return render(request, 'Manager/displayAnnouncementList.html', context)
+
+
+@login_required
+def EditIndividualAnnouncement(request, ann_id) :
+    announcement_object = Announcement.objects.get(id=ann_id)
+    if request.method == 'POST' :
+        if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+            announcement_object.content = request.POST['content']
+            # Format the recieved date time string into a datetime object that will be saved.
+            expiry_date_time = datetime.datetime.strptime(request.POST['expiry'].replace('.', '') , '%B %d, %Y, %I:%M %p')
+            announcement_object.expiry = expiry_date_time.replace(tzinfo=None)
+            announcement_object.save()
+            messages.success(request, 'Details entered have been updated.') 
+            return redirect('/view-all-announcements')
+        else :
+            raise PermissionDenied()
+    else :
+        if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+            return render(request, 'Manager/editIndividualAnnouncement.html', {'announcement' : announcement_object})
+        else :
+            raise PermissionDenied()
+
+
+@login_required
+def PostAnnouncement(request) :
+    if request.method == 'POST' :
+        if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+            announcement_content = request.POST['content']
+            announcement_expiry = datetime.datetime.strptime(request.POST['expiry'].replace('.', '') , '%B %d, %Y, %I:%M %p')
+            announcement_expiry = announcement_expiry.replace(tzinfo=None)
+            announcement_object = Announcement.objects.create(author=request.user, content=announcement_content, expiry=announcement_expiry)
+            if announcement_object.id :
+                messages.success(request, 'A new Announcement with the specfied details has been posted.') 
+                return redirect('/view-all-announcements')
+            else :
+                messages.error(request, 'An Error occured while posting the Announcement.')
+        else :
+            raise PermissionDenied()
+    else :
+        if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+            return render(request, 'Manager/postAnnouncement.html')
+        else :
+            raise PermissionDenied()
+
+
+@login_required
+def DeleteIndividualAnnouncement(request, ann_id) :
+    announcement_object = Announcement.objects.get(id=ann_id)
+    if request.method == 'POST' :
+        if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+            announcement_object.delete()
+            messages.success(request, 'Details entered have been updated.') 
+            return redirect('/view-all-announcements')
+        else :
+            raise PermissionDenied()
+    else :
+        if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+            return render(request, 'Manager/deleteAnnouncement.html', {'announcement' : announcement_object})
+        else :
+            raise PermissionDenied()
+
+
 # Pages common to Trainer and Manager
 
 
@@ -283,7 +357,6 @@ def DisplayNotificationList(request) :
         base_template = 'Manager/base.html'
     else :
         raise PermissionDenied()
-        """return redirect('/')"""
     context = {'notifications' : notification_objects, 'num_notifications' : num_notifications, 'base_template' : base_template}
     return render(request, 'notification/displayNotificationList.html', context)
 
@@ -327,21 +400,24 @@ def EditIndividualNotification(request, not_id) :
 @login_required
 def PostNotification(request) :
     if request.method == 'POST' :
-        notification_content = request.POST['content']
-        notification_expiry = datetime.datetime.strptime(request.POST['expiry'].replace('.', '') , '%B %d, %Y, %I:%M %p')
-        notification_expiry = notification_expiry.replace(tzinfo=None)
-        gym_class_names = request.POST.getlist('gym_class')
-        gym_classes = []
-        for gym_class_itr in gym_class_names :
-            gym_classes.append(GymClass.objects.get(name=gym_class_itr))
-        notification_object = Notification.objects.create(author=request.user, content=notification_content, expiry=notification_expiry)
-        notification_object.gym_class.set(gym_classes)
-        notification_object.save()
-        if notification_object.id :
-            messages.success(request, 'A notification with the specfied details has been posted.') 
-            return redirect('/view-all-notifications')
+        if request.user.role == 'T' or request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+            notification_content = request.POST['content']
+            notification_expiry = datetime.datetime.strptime(request.POST['expiry'].replace('.', '') , '%B %d, %Y, %I:%M %p')
+            notification_expiry = notification_expiry.replace(tzinfo=None)
+            gym_class_names = request.POST.getlist('gym_class')
+            gym_classes = []
+            for gym_class_itr in gym_class_names :
+                gym_classes.append(GymClass.objects.get(name=gym_class_itr))
+            notification_object = Notification.objects.create(author=request.user, content=notification_content, expiry=notification_expiry)
+            notification_object.gym_class.set(gym_classes)
+            notification_object.save()
+            if notification_object.id :
+                messages.success(request, 'A new notification with the specfied details has been posted.') 
+                return redirect('/view-all-notifications')
+            else :
+                messages.error(request, 'An Error occured while posting the notification.')
         else :
-            messages.error(request, 'An Error occured while posting the notification.')
+            raise PermissionDenied()
     else :
         if request.user.role == 'T' :
             gym_classes = request.user.trainer_profile_account.get().gym_class.all()
@@ -351,7 +427,6 @@ def PostNotification(request) :
             base_template = 'Manager/base.html'
         else :
             raise PermissionDenied()
-            return
         return render(request, 'notification/postNotification.html', {'gym_classes' : gym_classes, 'base_template' : base_template})
 
 

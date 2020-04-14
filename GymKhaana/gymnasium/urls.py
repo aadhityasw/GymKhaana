@@ -58,6 +58,14 @@ urlpatterns = [
 
     path('view-admin/<int:adm_id>/', views.DisplayIndividualAdmin, name='view-individual-admin'),
 
+    path('view-all-announcements/', views.DisplayAnnouncementList, name='view-my-announcements'),
+
+    path('edit-announcement/<int:ann_id>/', views.EditIndividualAnnouncement, name='edit-announcement'),
+
+    path('post-announcement/', views.PostAnnouncement, name='post-announcement'),
+
+    path('delete-announcement/<int:ann_id>/', views.DeleteIndividualAnnouncement, name='delete-announcement'),
+
     # Links common to Manager and Trainer
 
     path('view-all-notifications/', views.DisplayNotificationList, name='view-my-notifications'),

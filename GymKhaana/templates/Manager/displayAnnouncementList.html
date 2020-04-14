@@ -1,0 +1,47 @@
+{% extends 'Manager/base.html' %} 
+{% load static %}
+
+{% block header %}
+    <link rel="stylesheet" href="{% static 'css/notification/displayNotificationList.css' %}" type="text/css">
+{% endblock %}
+
+{% block body %}
+    {% if user.is_authenticated %}
+        <h1>Welcome {{ user }}</h1>
+        <h2>Announcement Center</h2>
+        {% if num_announcements == 0 %}
+            <h1>There are no active announcements avalible.</h1>
+        {% else %}
+            <table>
+                <tr>
+                    <th>Sno</th>
+                    <th>Announcement Content</th>
+                    <th>Author</th>
+                </tr>
+                {% for announcement in announcements %}
+                    <tr>
+                        <th>{{ forloop.counter }}</th>
+                        <td>{{ announcement.content }}</td>
+                        <td>
+                            {% if announcement.author.role == 'M' %}
+                                {{ announcement.author.manager_profile_account.get.full_name }}
+                            {% else %}
+                                {% if announcement.author.role == 'T' %}
+                                    {{ announcement.author.trainer_profile_account.get.full_name }}
+                                {% else %}
+                                    {{ announcement.author }}
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                        <td>
+                            <button><a href="/edit-announcement/{{ announcement.id }}">Edit</a></button>
+                        </td>
+                        <td>
+                            <button><a href="/delete-announcement/{{ announcement.id }}">Delete</a></button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+    {% endif %}
+{% endblock %}

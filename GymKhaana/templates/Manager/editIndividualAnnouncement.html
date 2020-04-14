@@ -1,0 +1,50 @@
+{% extends 'Manager/base.html' %} 
+{% load static %}
+
+{% block header %}
+    <link rel="stylesheet" href="{% static 'css/notification/editNotification.css' %}" type="text/css">
+{% endblock %}
+
+{% block body %}
+    {% if user.is_authenticated %}
+        <h1>Welcome {{ user }}</h1>
+        <h2>Edit Announcement</h2>
+        <form method="post">
+            {% csrf_token %}
+            <table>
+                <tr>
+                    <th>Author</th>
+                    <th>
+                        {% if announcement.author.role == 'M' %}
+                            {{ announcement.author.manager_profile_account.get.full_name }}
+                        {% else %}
+                            {% if announcement.author.role == 'T' %}
+                                {{ announcement.author.trainer_profile_account.get.full_name }}
+                            {% else %}
+                                {{ announcement.author }}
+                            {% endif %}
+                        {% endif %}
+                    </th>
+                </tr>
+                <tr>
+                    <th>Content</th>
+                    <td>
+                        <textarea name="content" id="content" cols="30" rows="10">
+                            {{ announcement.content }}
+                        </textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Expiry</th>
+                    <td>
+                        <input style="width: 15em;" type="datetime" name="expiry" id="expiry" value="{{ announcement.expiry }}">
+                    </td>
+                </tr>
+                <tr>
+                    <td><button><a href="/delete-announcement/{{ announcement.id }}">Delete</a></button></td>
+                    <td><input type="submit" value="Submit"></td>
+                </tr>
+            </table>
+        </form>
+    {% endif %}
+{% endblock %}

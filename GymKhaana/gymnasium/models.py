@@ -90,8 +90,7 @@ class Notification(models.Model) :
             models.Q(role='T') | models.Q(role='M') | models.Q(role='A')
         )
     content = models.TextField(max_length=500)
-    # end_date = models.DateField(verbose_name="Expiry for Notification")
-    expiry = models.DateTimeField(verbose_name="Expiry for Notification", default=timezone.now)
+    expiry = models.DateTimeField(verbose_name="Expiry for Notification", default=None)
 
     class Meta :
         verbose_name = "Notification"
@@ -102,16 +101,17 @@ class Notification(models.Model) :
 
 
 class Announcement(models.Model) :
-    account = models.ForeignKey(
+    author = models.ForeignKey(
         'users.CustomUser',
         on_delete=models.CASCADE,
         limit_choices_to={'role' : 'M'})
     content = models.TextField(max_length=500)
-    end_date = models.DateField(verbose_name="Expiry for Notification")
+    # Use (timezone.now() + timezone.timedelta(1)) to add 1 day to current time.
+    expiry = models.DateTimeField(verbose_name="Expiry for Announcement", default=None)
 
     class Meta :
         verbose_name = "Announcement"
         verbose_name_plural = "Announcements"
 
     def __str__(self):
-        return (str(self.account))
+        return (str(self.author))
