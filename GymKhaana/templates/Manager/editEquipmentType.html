@@ -1,0 +1,30 @@
+{% extends 'Manager/base.html' %} 
+{% load static %}
+
+{% block header %}
+    <link rel="stylesheet" href="{% static 'css/common/create.css' %}" type="text/css">
+{% endblock %}
+
+{% block body %}
+    {% if user.is_authenticated %}
+        <h1>Welcome {{ user }}</h1>
+        <h2>Edit Equipment Type</h2>
+        <form method="post">
+            {% csrf_token %}
+            <table>
+                <tr>
+                    <th>Equipment Type Name</th>
+                    <th><input type="text" name="name" id="name" value="{{ equipment_type.name }}"></th>
+                </tr>
+                <tr>
+                    <th>Product Description</th>
+                    <td><textarea name="description" id="description" cols="30" rows="10">{{ equipment_type.description }}</textarea></td>
+                </tr>
+                <tr>
+                    <td><button><a href="/view-all-equipment-types">Cancel</a></button></td>
+                    <td><input type="submit" value="Submit"></td>
+                </tr>
+            </table>
+        </form>
+    {% endif %}
+{% endblock %}

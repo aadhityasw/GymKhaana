@@ -3,25 +3,32 @@ from django.utils import timezone
 
 class Equipmenttype(models.Model) :
     name = models.CharField(max_length=200)
+    description = models.TextField(max_length=500, blank=True, null=True)
+
+    class Meta:
+        verbose_name = "Equipment Type"
+        verbose_name_plural = "Equipment Types"
 
     def __str__(self):
         return self.name
 
 class Equipment(models.Model) :
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200, verbose_name='Model Name')
     date_of_purchase = models.DateField()
-    equipment_type = models.ForeignKey(Equipmenttype, on_delete=models.SET_NULL, null=True)
+    equipment_type = models.ForeignKey(Equipmenttype, on_delete=models.CASCADE, null=True, related_name='equipments')
+    detail = models.TextField(max_length=500, blank=True, null=True)
 
     class Meta:
         verbose_name = "Equipment"
         verbose_name_plural = "Equipments"
 
     def __str__(self):
-        return self.name
+        stri = self.name + str(self.equipment_type.name)
+        return stri
 
 
 class AMC(models.Model) :
-    equipment = models.ForeignKey('Equipment', on_delete=models.CASCADE)
+    equipment = models.ForeignKey('Equipment', on_delete=models.CASCADE, related_name='amc')
     start_date = models.DateField()
     renewal_date = models.DateField()
 

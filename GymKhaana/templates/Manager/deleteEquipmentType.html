@@ -1,0 +1,46 @@
+{% extends 'Manager/base.html' %} 
+{% load static %}
+
+{% block header %}
+    <link rel="stylesheet" href="{% static 'css/common/individual.css' %}" type="text/css">
+{% endblock %}
+
+{% block body %}
+    {% if user.is_authenticated %}
+        <h1>Welcome {{ user }}</h1>
+        <h2>Delete Equipment Type</h2>
+        <h3>Are you sure about deleting the equipment type ?</h3>
+        <form method="post">
+            {% csrf_token %}
+            <table>
+                <tr>
+                    <th>Equipment Type Name</th>
+                    <th>{{ equipment_type.name }}</th>
+                </tr>
+                <tr>
+                    <th>Product Description</th>
+                    <td>{{ equipment_type.description }}</td>
+                </tr>
+                {% if num_equipments > 0 %}
+                    <tr>
+                        <th>Equipments</th>
+                        <td>
+                            <ul>
+                            {% for equipment in equipments %}
+                                <li>{{ equipment.name }}</li>
+                            {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">If you delete the current Equipment type, then all of the above mentioned equipments will be deleted and their data will be lost.</td>
+                    </tr>
+                {% endif %}
+                <tr>
+                    <td><button><a href="/view-all-equipment-types">Cancel</a></button></td>
+                    <td><input type="submit" value="Submit"></td>
+                </tr>
+            </table>
+        </form>
+    {% endif %}
+{% endblock %}
