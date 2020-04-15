@@ -7,8 +7,10 @@
 
 {% block body %}
     {% if user.is_authenticated %}
-        <h1>Welcome {{ user }}</h1>
-        <h2>Edit Trainer Profile</h1>
+        <br>
+        <h1 class="title">Welcome {{ user }}</h1>
+        <br>
+        <h2>Edit Trainer Profile</h2>
         <form method="post">
             {% csrf_token %}
             <table>
@@ -83,13 +85,13 @@
                         </textarea>
                     </td>
                 </tr>
+                <br><br>
                 <tr>
-                    <td></td>
-                    <td>
-                        <button type="submit">Update Details</button>
-                    </td>
+                    <td colspan="2"><button class="save" type="submit">Update Details</button></td>
                 </tr>
             </table>
         </form>
+        <br><br>
+        <button><a href="/trainer-profile">Back</a></button>
     {% endif %}
 {% endblock %}

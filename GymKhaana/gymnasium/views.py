@@ -40,10 +40,13 @@ def changePassword(request) :
     # Choose the base template for different types of users.
     if request.user.role == 'C' :
         base_template = 'Customer/base.html'
+        profile = '/customer-profile'
     elif request.user.role == 'T' :
         base_template = 'Trainer/base.html'
+        profile = '/trainer-profile'
     else :
         base_template = 'Manager/base.html'
+        profile = '/manager-profile'
     # Handle Form Request.
     if request.method == 'POST':
         form = PasswordChangeForm(request.user, request.POST)
@@ -58,7 +61,8 @@ def changePassword(request) :
         form = PasswordChangeForm(request.user)
     return render(request, 'registration/changePassword.html', {
         'form': form,
-        'base_template' : base_template
+        'base_template' : base_template,
+        'profile' : profile
     })
 
 

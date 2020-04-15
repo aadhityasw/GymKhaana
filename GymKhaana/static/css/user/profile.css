@@ -1,6 +1,7 @@
 .pagebody {
     padding: 0%;
     background: linear-gradient(to bottom right, rgb(1, 255, 255), rgb(168, 7, 231));
+    text-align: center;
 }
 
 h1 {
@@ -19,9 +20,10 @@ h2 {
     background-color: unset;
 }
 
-.tabla {
+table {
     background-image: linear-gradient(45deg,#efefef 25%,rgba(239,239,239,0) 25%,rgba(239,239,239,0) 75%,#efefef 75%,#efefef),linear-gradient(45deg,#efefef 25%,rgba(239,239,239,0) 25%,rgba(239,239,239,0) 75%,#efefef 75%,#efefef);
     width: 50%;
+    margin: auto;
     font-size: 25px;
     background-color:rgb(227, 238, 255);
     border-radius: 40px;
@@ -33,15 +35,26 @@ th {
     padding: 20px;
 }
 
+td {
+    padding-right: 10px;
+}
+
 button {
 	font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 	border-radius: 20px;
 	background-color: rgb(255, 0, 0);
 	font-weight: bold;
 	color:white;
-	padding: 10px;
-	margin: 30px;
+    padding: 10px;
+    margin: 30px;
 	border-color:1px white;
+}
+
+button a {
+    text-decoration: none;
+    padding: 10px;
+    color: white;
+    font-size: large;
 }
 
 .title {

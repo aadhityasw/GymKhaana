@@ -7,123 +7,120 @@
 
 {% block body %}
     {% if user.is_authenticated %}
-        <center>
-            <br>
-            <h1 class="title">Welcome {{ user }}</h1>
-            <br>
-            <h2>Edit Customer Profile</h2>
-            <form method="post">
-                {% csrf_token %}
-                <table  class="tabla1">
-                    <tr>
-                        <th>Full Name</th>
-                        <td>
-                            <input type="text" name="full_name" id="full_name" value="{{ customer.full_name }}">
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Phone</th>
-                        <td>
-                            <input type="tel" name="mobile" id="mobile" value="{{ customer.mobile }}">
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Email</th>
-                        <td>
-                            <input type="email" name="email" id="email" value="{{ customer.account.email }}">
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Address</th>
-                        <td>
-                            <textarea name="address" id="address" cols="30" rows="10">
-                                {{ customer.address }}
-                            </textarea>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Gender</th>
-                        <td>
-                            <select name="gender" id="gender">
-                                <option value="M" 
-                                    {% if customer.gender == "M" %}
-                                        selected
-                                    {% endif %} >
-                                    Male
-                                </option>
-                                <option value="F"
-                                    {% if customer.gender == "F" %}
-                                        selected
-                                    {% endif %}>
-                                    Female
-                                </option>
-                                <option value="O"
-                                    {% if customer.gender == "O" %}
-                                        selected
-                                    {% endif %}>
-                                    Other
-                                </option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Age</th>
-                        <td>
-                            <input type="number" name="age" id="age" value="{{ customer.age }}">
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Weight</th>
-                        <td>
-                            <input type="number" name="weight" id="weight" value="{{ customer.weight }}">
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Medical History</th>
-                        <td>
-                            <textarea name="medical_history" id="medical_history" cols="30" rows="10">
-                                {{ customer.medical_history }}
-                            </textarea>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Allergies</th>
-                        <td>
-                            <textarea name="allergies" id="allergies" cols="30" rows="10">
-                                {{ customer.allergies }}
-                            </textarea>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Interested Equipments</th>
-                        <td>
-                            <fieldset>
-                                <legend>Equipments</legend>
-                                {% for eq in equipment_types %}
-                                    <input
-                                        type="checkbox"
-                                        id="{{ eq }}"
-                                        name="equipment"
-                                        value="{{ eq }}"
-                                        {% if eq in customer.equipment_interest.all %}
-                                            checked
-                                        {% endif %}
-                                    >
-                                    <label for="{{ eq }}">{{ eq }}</label>
-                                    <br>
-                                {% endfor %}
-                            </fieldset>
-                        </td>
-                    </tr>
-                    <br><br>
-                    <tr>
-                        <td style="padding-left:50px;"></td>
-                        <td><button type="submit">Update Details</button></td>
-                    </tr>
-                </table>
+        <br>
+        <h1 class="title">Welcome {{ user }}</h1>
+        <br>
+        <h2>Edit Customer Profile</h2>
+        <form method="post">
+            {% csrf_token %}
+            <table  class="tabla1">
+                <tr>
+                    <th>Full Name</th>
+                    <td>
+                        <input type="text" name="full_name" id="full_name" value="{{ customer.full_name }}">
+                    </td>
+                </tr>
+                <tr>
+                    <th>Phone</th>
+                    <td>
+                        <input type="tel" name="mobile" id="mobile" value="{{ customer.mobile }}">
+                    </td>
+                </tr>
+                <tr>
+                    <th>Email</th>
+                    <td>
+                        <input type="email" name="email" id="email" value="{{ customer.account.email }}">
+                    </td>
+                </tr>
+                <tr>
+                    <th>Address</th>
+                    <td>
+                        <textarea name="address" id="address" cols="30" rows="10">
+                            {{ customer.address }}
+                        </textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Gender</th>
+                    <td>
+                        <select name="gender" id="gender">
+                            <option value="M" 
+                                {% if customer.gender == "M" %}
+                                    selected
+                                {% endif %} >
+                                Male
+                            </option>
+                            <option value="F"
+                                {% if customer.gender == "F" %}
+                                    selected
+                                {% endif %}>
+                                Female
+                            </option>
+                            <option value="O"
+                                {% if customer.gender == "O" %}
+                                    selected
+                                {% endif %}>
+                                Other
+                            </option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Age</th>
+                    <td>
+                        <input type="number" name="age" id="age" value="{{ customer.age }}">
+                    </td>
+                </tr>
+                <tr>
+                    <th>Weight</th>
+                    <td>
+                        <input type="number" name="weight" id="weight" value="{{ customer.weight }}">
+                    </td>
+                </tr>
+                <tr>
+                    <th>Medical History</th>
+                    <td>
+                        <textarea name="medical_history" id="medical_history" cols="30" rows="10">
+                            {{ customer.medical_history }}
+                        </textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Allergies</th>
+                    <td>
+                        <textarea name="allergies" id="allergies" cols="30" rows="10">
+                            {{ customer.allergies }}
+                        </textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Interested Equipments</th>
+                    <td>
+                        <fieldset>
+                            <legend>Equipments</legend>
+                            {% for eq in equipment_types %}
+                                <input
+                                    type="checkbox"
+                                    id="{{ eq }}"
+                                    name="equipment"
+                                    value="{{ eq }}"
+                                    {% if eq in customer.equipment_interest.all %}
+                                        checked
+                                    {% endif %}
+                                >
+                                <label for="{{ eq }}">{{ eq }}</label>
+                                <br>
+                            {% endfor %}
+                        </fieldset>
+                    </td>
+                </tr>
                 <br><br>
-                <button><a href="/customer-profile">Back</a></button>
-            </form>
-        </center>
+                <tr>
+                    <td colspan="2"><button class="save" type="submit">Update Details</button></td>
+                </tr>
+            </table>
+            <br><br>
+            <button><a href="/customer-profile">Back</a></button>
+        </form>
     {% endif %}
 {% endblock %}

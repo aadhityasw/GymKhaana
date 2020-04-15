@@ -7,86 +7,84 @@
 
 {% block body %}
     {% if user.is_authenticated %}
-        <center>
-            <br>
-            <h1 class="title">Welcome {{ user }}</h1>
-            <br>
-            <h2>Customer Profile</h2>
-            <br>
-            <table class="tabla">
+        <br>
+        <h1 class="title">Welcome {{ user }}</h1>
+        <br>
+        <h2>Customer Profile</h2>
+        <br>
+        <table class="tabla">
+            <tr>
+                <th>Username :-</th>
+                <td>{{ customer.account.username }}</td>
+            </tr>
+            <tr>
+                <th>Full Name :-</th>
+                <td>{{ customer.full_name }}</td>
+            </tr>
+            <tr>
+                <th>Email :-</th>
+                <td>{{ customer.account.email }}</td>
+            </tr>
+            <tr>
+                <th>Phone :-</th>
+                <td>{{ customer.mobile }}</td>
+            </tr>
+            <tr>
+                <th>Address :-</th>
+                <td>{{ customer.address }}</td>
+            </tr>
+            <tr>
+                <th>Gender :-</th>
+                <td>{{ customer.gender }}</td>
+            </tr>
+            <tr>
+                <th>Age :-</th>
+                <td>{{ customer.age }}</td>
+            </tr>
+            <tr>
+                <th>Weight :-</th>
+                <td>{{ customer.weight }}</td>
+            </tr>
+            <tr>
+                <th>Medical History :-</th>
+                <td>{{ customer.medical_history }}</td>
+            </tr>
+            <tr>
+                <th>Allergies :-</th>
+                <td>{{ customer.allergies }}</td>
+            </tr>
+            <tr>
+                <th>Membership Status :-</th>
+                <td>{{ membership_status }}</td>
+            </tr>
+            {% if membership_status == 'Active' %}
                 <tr>
-                    <th>Username :-</th>
-                    <td>{{ customer.account.username }}</td>
+                    <th>Gym Package :-</th>
+                    <td>{{ customer.gym_package }}</td>
                 </tr>
                 <tr>
-                    <th>Full Name :-</th>
-                    <td>{{ customer.full_name }}</td>
+                    <th>Gym Class</th>
+                    <td>{{ customer.gym_class }}</td>
                 </tr>
                 <tr>
-                    <th>Email :-</th>
-                    <td>{{ customer.account.email }}</td>
+                    <th>Membership Deadline</th>
+                    <td>{{ membership.deadline }}</td>
                 </tr>
-                <tr>
-                    <th>Phone :-</th>
-                    <td>{{ customer.mobile }}</td>
-                </tr>
-                <tr>
-                    <th>Address :-</th>
-                    <td>{{ customer.address }}</td>
-                </tr>
-                <tr>
-                    <th>Gender :-</th>
-                    <td>{{ customer.gender }}</td>
-                </tr>
-                <tr>
-                    <th>Age :-</th>
-                    <td>{{ customer.age }}</td>
-                </tr>
-                <tr>
-                    <th>Weight :-</th>
-                    <td>{{ customer.weight }}</td>
-                </tr>
-                <tr>
-                    <th>Medical History :-</th>
-                    <td>{{ customer.medical_history }}</td>
-                </tr>
-                <tr>
-                    <th>Allergies :-</th>
-                    <td>{{ customer.allergies }}</td>
-                </tr>
-                <tr>
-                    <th>Membership Status :-</th>
-                    <td>{{ membership_status }}</td>
-                </tr>
-                {% if membership_status == 'Active' %}
-                    <tr>
-                        <th>Gym Package :-</th>
-                        <td>{{ customer.gym_package }}</td>
-                    </tr>
-                    <tr>
-                        <th>Gym Class</th>
-                        <td>{{ customer.gym_class }}</td>
-                    </tr>
-                    <tr>
-                        <th>Membership Deadline</th>
-                        <td>{{ membership.deadline }}</td>
-                    </tr>
-                {% endif %}
-                <tr>
-                    <th>Interested Equipments :-</th>
-                    <td>
-                        <ul class='equipment-list'>
-                            {% for eq in customer.equipment_interest.all %}
-                                <li>{{ eq }}</li>
-                            {% endfor %}
-                        </ul>
-                    </td>
-                </tr>
-            </table>
-            <br><br><br>
-            <button><a href="/edit-customer-profile">Edit Profile</a></button>
-            <br>
-            <button><a href="/change-password">Change Password</a></button>
-        </center>
+            {% endif %}
+            <tr>
+                <th>Interested Equipments :-</th>
+                <td>
+                    <ul class='equipment-list'>
+                        {% for eq in customer.equipment_interest.all %}
+                            <li>{{ eq }}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+        </table>
+        <br><br><br>
+        <button><a href="/edit-customer-profile">Edit Profile</a></button>
+        <br>
+        <button><a href="/change-password">Change Password</a></button>
     {% endif %}
 {% endblock %}
