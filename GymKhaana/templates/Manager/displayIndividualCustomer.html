@@ -2,12 +2,14 @@
 {% load static %}
 
 {% block header %}
-    <link rel="stylesheet" href="{% static 'css/user/displayIndividualUser.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/user/profile.css' %}" type="text/css">
 {% endblock %}
 
 {% block body %}
     {% if user.is_authenticated %}
-        <h2>Customer Profile</h1>
+        <br>
+        <h1 class="title">Customer Profile</h1>
+        <br>
         <table>
             <tr>
                 <th>Username</th>
@@ -78,5 +80,7 @@
                 </td>
             </tr>
         </table>
+        <br><br>
+        <button><a href="/view-customer-list">Back</a></button>
     {% endif %}
 {% endblock %}

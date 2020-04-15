@@ -7,8 +7,11 @@
 
 {% block body %}
     {% if user.is_authenticated %}
-        <h1>Welcome {{ user }}</h1>
-        <h2>Manager Profile</h1>
+        <br>
+        <h1 class="title">Welcome {{ user }}</h1>
+        <br>
+        <h2>Manager Profile</h2>
+        <br>
         <table>
             <tr>
                 <th>Name</th>
@@ -39,6 +42,7 @@
                 <td>{{ manager.age }}</td>
             </tr>
         </table>
+        <br><br><br>
         <button>
             <a href="/edit-manager-profile">Edit Profile</a>
         </button>

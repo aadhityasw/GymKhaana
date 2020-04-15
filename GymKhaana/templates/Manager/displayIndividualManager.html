@@ -7,36 +7,40 @@
 
 {% block body %}
     {% if user.is_authenticated %}
-        <h2>Manager Profile</h1>
-            <table>
-                <tr>
-                    <th>User Name</th>
-                    <td>{{ manager.account.username }}</td>
-                </tr>
-                <tr>
-                    <th>Full Name</th>
-                    <td>{{ manager.full_name }}</td>
-                </tr>
-                <tr>
-                    <th>Email</th>
-                    <td>{{ manager.account.email }}</td>
-                </tr>
-                <tr>
-                    <th>Phone</th>
-                    <td>{{ manager.mobile }}</td>
-                </tr>
-                <tr>
-                    <th>Address</th>
-                    <td>{{ manager.address }}</td>
-                </tr>
-                <tr>
-                    <th>Gender</th>
-                    <td>{{ manager.gender }}</td>
-                </tr>
-                <tr>
-                    <th>Age</th>
-                    <td>{{ manager.age }}</td>
-                </tr>
-            </table>
+        <br>
+        <h1 class="title">Manager Profile</h1>
+        <br>
+        <table>
+            <tr>
+                <th>User Name</th>
+                <td>{{ manager.account.username }}</td>
+            </tr>
+            <tr>
+                <th>Full Name</th>
+                <td>{{ manager.full_name }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ manager.account.email }}</td>
+            </tr>
+            <tr>
+                <th>Phone</th>
+                <td>{{ manager.mobile }}</td>
+            </tr>
+            <tr>
+                <th>Address</th>
+                <td>{{ manager.address }}</td>
+            </tr>
+            <tr>
+                <th>Gender</th>
+                <td>{{ manager.gender }}</td>
+            </tr>
+            <tr>
+                <th>Age</th>
+                <td>{{ manager.age }}</td>
+            </tr>
+        </table>
+        <br><br>
+        <button><a href="/view-manager-list">Back</a></button>
     {% endif %}
 {% endblock %}
