@@ -153,3 +153,17 @@ h1, h2, h3, h4, h5, h6 {
     margin: 0px;
     padding: 0px;
 }
+
+/*
+@media(max-width: 1190px) {
+    .vio ul {
+        overflow: auto;
+        white-space: nowrap;
+        flex-wrap: nowrap;
+    }
+
+    .vio ul li {
+        display: inline;
+    }
+}
+*/

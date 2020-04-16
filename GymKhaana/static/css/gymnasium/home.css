@@ -41,6 +41,34 @@
 }
 .contact {
     margin-bottom: 80px;
+    overflow-x: scroll;
+    white-space: nowrap;
+}
+
+.card-deck {
+    overflow: scroll;
+    white-space: nowrap;
+    flex-wrap: nowrap;
+}
+
+.card {
+    background: linear-gradient(to bottom right, rgb(1, 255, 255), rgb(168, 7, 231));
+    border: 2px solid black;
+    margin-left:17px;
+    overflow-x: scroll;
+    min-width: fit-content;
+}
+
+.card-img-top {
+    margin: auto;
+    margin-top:8%;
+    margin-bottom:8%;
+    border: 1px solid white;
+}
+
+.card-body {
+    width: fit-content;
+    margin: auto;
 }
 
 .contact img {
@@ -48,6 +76,8 @@
     width: 200px;
     border-radius: 2500px;
 }
+
 .cardshead {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
 }
