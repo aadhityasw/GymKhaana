@@ -8,7 +8,7 @@ from django.core.exceptions import PermissionDenied
 from django.db import models
 
 from users.models import CustomUser, CustomerProfile, TrainerProfile, ManagerProfile
-from .models import Membership, Package, Notification, Equipmenttype, Announcement, GymClass
+from .models import Membership, Package, Notification, Equipment, Equipmenttype, Announcement, GymClass
 import datetime
 
 
@@ -351,7 +351,7 @@ def CreateEquipmentType(request) :
             eq_description = request.POST['description']
             equipment_type_object = Equipmenttype.objects.create(name=eq_name, description=eq_description)
             if equipment_type_object.id :
-                messages.success(request, 'A Equipment type has been created succeddfully.')
+                messages.success(request, 'A Equipment type has been created successfully.')
                 return redirect('/view-all-equipment-types')
             else :
                 messages.error(request, 'An Error occured while creating the Equipment type.')
@@ -380,7 +380,7 @@ def EditEquipmentType(request, eqty_id) :
             equipment_type_object.name = request.POST['name']
             equipment_type_object.description = request.POST['description']
             equipment_type_object.save()
-            messages.success(request, 'The Equipment type has been modified succeddfully.')
+            messages.success(request, 'The Equipment type has been modified successfully.')
             return redirect( '/view-all-equipment-types')
         else :
             return render(request, 'Manager/editEquipmentType.html', {'equipment_type' : equipment_type_object})
@@ -394,7 +394,7 @@ def DeleteEquipmentType(request, eqty_id) :
         equipment_type_object = Equipmenttype.objects.get(id=eqty_id)
         if request.method == 'POST' :
             equipment_type_object.delete()
-            messages.success(request, 'The Equipment type has been deleted succeddfully.')
+            messages.success(request, 'The Equipment type has been deleted successfully.')
             return redirect('/view-all-equipment-types')
         else :
             equipment_objects = equipment_type_object.equipments.all()
@@ -404,6 +404,85 @@ def DeleteEquipmentType(request, eqty_id) :
     else :
         raise PermissionDenied()
 
+
+@login_required
+def CreateEquipment(request) :
+    if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+        if request.method == 'POST' :
+            eq_name = request.POST['name']
+            eq_detail = request.POST['detail']
+            eq_purchase = request.POST['purchase']
+            eq_type_name = request.POST['eq_type']
+            eq_type = Equipmenttype.objects.get(name=eq_type_name)
+            equipment_object = Equipment.objects.create(name=eq_name, detail=eq_detail, date_of_purchase=eq_purchase, equipment_type=eq_type)
+            if equipment_object.id :
+                messages.success(request, 'The Equipment record has been created successfully.')
+                return redirect('/view-all-equipment')
+            else :
+                messages.error(request, 'An Error occured while creating the Equipment record.')
+        else :
+            equipment_type_objects = Equipmenttype.objects.all()
+            return render(request, 'Manager/createEquipment.html', {'equipment_types' : equipment_type_objects})
+    else :
+        raise PermissionDenied()
+
+
+@login_required
+def DisplayAllEquipmentList(request) :
+    if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+        equipment_objects = Equipment.objects.all()
+        num_equipment = len(equipment_objects)
+        context = {'equipments' : equipment_objects, 'num_equipment' : num_equipment}
+        return render(request, 'Manager/displayAllEquipmentList.html', context)
+    else :
+        raise PermissionDenied()
+
+
+@login_required
+def EditEquipment(request, eq_id) :
+    if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+        equipment_object = Equipment.objects.get(id=eq_id)
+        if request.method == 'POST' :
+            equipment_object.name = request.POST['name']
+            equipment_object.detail = request.POST['detail']
+            equipment_object.date_of_purchase = request.POST['purchase']
+            eq_type_name = request.POST['eq_type']
+            equipment_object.equipment_type = Equipmenttype.objects.get(name=eq_type_name)
+            equipment_object.save()
+            messages.success(request, 'The Equipment record has been modified successfully.')
+            return redirect( '/view-all-equipment')
+        else :
+            equipment_type_objects = Equipmenttype.objects.all()
+            return render(request, 'Manager/editEquipment.html', {'equipment' : equipment_object, 'equipment_types' : equipment_type_objects})
+    else :
+        raise PermissionDenied()
+
+
+@login_required
+def DeleteEquipment(request, eq_id) :
+    if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+        equipment_object = Equipment.objects.get(id=eq_id)
+        if request.method == 'POST' :
+            equipment_object.delete()
+            messages.success(request, 'The Equipment record has been deleted successfully.')
+            return redirect('/view-all-equipment')
+        else :
+            context = {'equipment' : equipment_object}
+            return render(request, 'Manager/deleteEquipment.html', context)
+    else :
+        raise PermissionDenied()
+
+
+@login_required
+def DisplayEquipmentListOfType(request, eqty_id) :
+    if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+        equipment_type_object = Equipmenttype.objects.get(id=eqty_id)
+        equipment_objects = Equipment.objects.filter(equipment_type=equipment_type_object)
+        num_equipment = len(equipment_objects)
+        context = {'equipments' : equipment_objects, 'num_equipment' : num_equipment, 'equipment_type' : equipment_type_object}
+        return render(request, 'Manager/displayEquipmentListOfType.html', context)
+    else :
+        raise PermissionDenied()
 
 
 # Pages common to Trainer and Manager

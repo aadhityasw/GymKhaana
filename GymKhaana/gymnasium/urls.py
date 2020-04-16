@@ -74,6 +74,16 @@ urlpatterns = [
 
     path('delete-equipment-type/<int:eqty_id>/', views.DeleteEquipmentType, name='delete-equipment-type'),
 
+    path('create-equipment/', views.CreateEquipment, name='create-equipment'),
+
+    path('edit-equipment/<int:eq_id>/', views.EditEquipment, name='edit-equipment'),
+
+    path('delete-equipment/<int:eq_id>/', views.DeleteEquipment, name='delete-equipment'),
+
+    path('view-all-equipment/', views.DisplayAllEquipmentList, name='view-all-equipment'),
+
+    path('equipment-type/<int:eqty_id>/equipment-list', views.DisplayEquipmentListOfType, name='view-all-equipment-of-equipment-types'),
+
     # Links common to Manager and Trainer
 
     path('view-all-notifications/', views.DisplayNotificationList, name='view-my-notifications'),

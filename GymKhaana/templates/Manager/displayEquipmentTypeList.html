@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block header %}
-    <link rel="stylesheet" href="{% static 'css/custom/list.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/common/list.css' %}" type="text/css">
 {% endblock %}
 
 {% block body %}
@@ -19,7 +19,7 @@
                 {% for equipment_type in equipment_types %}
                     <tr>
                         <th>{{ forloop.counter }}</th>
-                        <td>{{ equipment_type.name }}</td>
+                        <td><a href="/equipment-type/{{ equipment_type.id }}/equipment-list">{{ equipment_type.name }}</a></td>
                         <td>{{ equipment_type.description }}</td>
                         <td>
                             <ul>

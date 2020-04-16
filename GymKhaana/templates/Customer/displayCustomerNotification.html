@@ -2,44 +2,41 @@
 {% load static %}
 
 {% block header %}
-    <link rel="stylesheet" href="{% static 'css/Customer/displayNotification.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/common/list.css' %}" type="text/css">
 {% endblock %}
 
 {% block body %}
     {% if user.is_authenticated %}
-        <center>
-            <br>
-                <h1 class="title">Welcome {{ user }}</h1>
-                <br>
-                <br>
-
-            {% if num_notifications == 0 and membership_deadline_near == False %}
-                <h3>There are no active notifications avalible.</h3>
-            {% else %}
-                <table class="tabla">
+        <br>
+        <h1 class="title">Welcome {{ user }}</h1>
+        <br>
+        <br>
+        {% if num_notifications == 0 and membership_deadline_near == False %}
+            <h3>There are no active notifications avalible.</h3>
+        {% else %}
+            <table>
+                <tr>
+                    <th>Sno</th>
+                    <th>Notification Content</th>
+                    <th>From</th>
+                </tr>
+                {% for notification in notifications %}
                     <tr>
-                        <th>Sno</th>
-                        <th>Notification Content</th>
-                        <th>From</th>
+                        <th>{{ forloop.counter }}</th>
+                        <td>{{ notification.content }}</td>
+                        <td>{{ notification.author }}</td>
                     </tr>
-                    {% for notification in notifications %}
-                        <tr>
-                            <th>{{ forloop.counter }}</th>
-                            <td>{{ notification.content }}</td>
-                            <td>{{ notification.author }}</td>
-                        </tr>
-                    {% endfor %}
-                    {% if membership_deadline_near %}
-                        <tr>
-                            <th>{{ num_notifications|add:"1" }}</th>
-                            <td>Your Membership to the gym is about to expire. You have 
-                                {{ days_left_expiry }} days left with your membership. 
-                                <a href="#"> Renew your membership </a> to continue using the services hassle-free.</td>
-                            <td>Gym Khaana</td>
-                        </tr>
-                    {% endif %}
-                </table>
-            {% endif %}
-        </center>
+                {% endfor %}
+                {% if membership_deadline_near %}
+                    <tr>
+                        <th>{{ num_notifications|add:"1" }}</th>
+                        <td>Your Membership to the gym is about to expire. You have 
+                            {{ days_left_expiry }} days left with your membership. 
+                            <a href="#"> Renew your membership </a> to continue using the services hassle-free.</td>
+                        <td>Gym Khaana</td>
+                    </tr>
+                {% endif %}
+            </table>
+        {% endif %}
     {% endif %}
 {% endblock %}

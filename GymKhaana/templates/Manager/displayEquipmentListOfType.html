@@ -1,0 +1,39 @@
+{% extends 'Manager/base.html' %} 
+{% load static %}
+
+{% block header %}
+    <link rel="stylesheet" href="{% static 'css/common/list.css' %}" type="text/css">
+{% endblock %}
+
+{% block body %}
+    {% if user.is_authenticated %}
+        <h1>Equipment List</h1>
+        <h2>{{ equipment_type }}</h2>
+        {% if num_equipment > 0 %}
+            <table>
+                <tr>
+                    <th>Sno</th>
+                    <th>Equipment Name</th>
+                    <th>Details</th>
+                    <th>Date Of Purchase</th>
+                </tr>
+                {% for equipment in equipments %}
+                    <tr>
+                        <th>{{ forloop.counter }}</th>
+                        <td>{{ equipment.name }}</td>
+                        <td>{{ equipment.detail }}</td>
+                        <td>{{ equipment.date_of_purchase }}</td>
+                        <td><button><a href="/edit-equipment/{{ equipment.id }}">Edit</a></button></td>
+                        <td><button><a href="/delete-equipment/{{ equipment.id }}">Delete</a></button></td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="2"><a href="/view-all-equipment-types">Back</a></td>
+                </tr>
+            </table>
+            <h2><button><a href="/create-equipment">Create new Equipment</a></button></h2>
+        {% else %}
+            <h2>There are no equipments of this type ({{ equipment_type }}) avalible right now <a href="/create-equipment">Click Here</a> to create a new one.</h2>
+        {% endif %}
+    {% endif %}
+{% endblock %}
