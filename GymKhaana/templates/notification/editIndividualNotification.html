@@ -7,8 +7,9 @@
 
 {% block body %}
     {% if user.is_authenticated %}
-        <h1>Welcome {{ user }}</h1>
-        <h2>Edit Notification</h2>
+        <br><br>
+        <h2 class="title">Edit Notification</h2>
+        <br>
         <form method="post">
             {% csrf_token %}
             <table>

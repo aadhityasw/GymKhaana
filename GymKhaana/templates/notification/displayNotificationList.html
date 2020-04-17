@@ -7,8 +7,9 @@
 
 {% block body %}
     {% if user.is_authenticated %}
-        <h1>Welcome {{ user }}</h1>
-        <h2>Notification Center</h2>
+        <br><br>
+        <h2 class="title">Notification Center</h2>
+        <br>
         {% if num_notifications == 0 %}
             <h1>There are no active notifications avalible.</h1>
         {% else %}

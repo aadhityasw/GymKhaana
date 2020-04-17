@@ -31,6 +31,8 @@ class AMC(models.Model) :
     equipment = models.ForeignKey('Equipment', on_delete=models.CASCADE, related_name='amc')
     start_date = models.DateField()
     renewal_date = models.DateField()
+    count = models.IntegerField(verbose_name='Count of Previous AMC\'s', default=0, max_length=10)
+    price = models.FloatField(max_length=5, default=0.0)
 
     class Meta:
         verbose_name = "AMC"

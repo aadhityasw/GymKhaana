@@ -7,8 +7,11 @@
 
 {% block body %}
     {% if user.is_authenticated %}
-        <h1>Equipment List</h1>
+        <br><br>
+        <h1 class="title">Equipment List</h1>
+        <br>
         <h2>{{ equipment_type }}</h2>
+        <br>
         {% if num_equipment > 0 %}
             <table>
                 <tr>

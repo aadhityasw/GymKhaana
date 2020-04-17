@@ -8,7 +8,7 @@ from django.core.exceptions import PermissionDenied
 from django.db import models
 
 from users.models import CustomUser, CustomerProfile, TrainerProfile, ManagerProfile
-from .models import Membership, Package, Notification, Equipment, Equipmenttype, Announcement, GymClass
+from .models import Membership, Package, Notification, Equipment, Equipmenttype, Announcement, GymClass, AMC
 import datetime
 
 
@@ -483,6 +483,34 @@ def DisplayEquipmentListOfType(request, eqty_id) :
         return render(request, 'Manager/displayEquipmentListOfType.html', context)
     else :
         raise PermissionDenied()
+
+
+@login_required
+def addAMC(request) :
+    if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+        if request.method == 'POST' :
+            eq_name = request.POST['equipment']
+            equipment_object = Equipment.objects.get(name=eq_name)
+            start = request.POST['start_date']
+            renew = request.POST['renewal_date']
+            present_price = request.POST['price']
+            amc_object = AMC.objects.create(equipment=equipment_object, start_date=start, renewal_date=renew, count=1, price=present_price)
+            if amc_object.id :
+                messages.success(request, 'The AMC record for the equipment has been created successfully.')
+                return redirect('/view-all-amc')
+            else :
+                messages.error(request, 'An Error occured while adding the AMC for the Equipment.')
+        else :
+            equipment_object_list = Equipment.objects.filter(amc=None)
+            context = {'equipments' : equipment_object_list}
+            return render(request, 'Manager/addAMC.html', context)
+    else :
+        raise PermissionDenied()
+
+
+@login_required
+def modifyAMC(request, amc_id) :
+    
 
 
 # Pages common to Trainer and Manager

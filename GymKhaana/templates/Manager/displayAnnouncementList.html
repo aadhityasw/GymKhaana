@@ -7,8 +7,9 @@
 
 {% block body %}
     {% if user.is_authenticated %}
-        <h1>Welcome {{ user }}</h1>
-        <h2>Announcement Center</h2>
+        <br><br>
+        <h2 class="title">Announcement Center</h2>
+        <br>
         {% if num_announcements == 0 %}
             <h1>There are no active announcements avalible.</h1>
         {% else %}
