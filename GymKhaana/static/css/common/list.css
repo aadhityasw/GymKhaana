@@ -43,6 +43,19 @@ button{
     border-color:1px white;
 }
 
+.save {
+	padding: 11px;
+	background-color: #427c07;
+	font-size: large;
+}
+
+button a {
+    text-decoration: none;
+    padding: 10px;
+    color: white;
+    font-size: large;
+}
+
 .title{
     text-align: center;
     margin-bottom: 20px;

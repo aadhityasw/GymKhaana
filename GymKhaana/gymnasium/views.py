@@ -486,7 +486,7 @@ def DisplayEquipmentListOfType(request, eqty_id) :
 
 
 @login_required
-def addAMC(request) :
+def AddAMC(request) :
     if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
         if request.method == 'POST' :
             eq_name = request.POST['equipment']
@@ -509,8 +509,50 @@ def addAMC(request) :
 
 
 @login_required
-def modifyAMC(request, amc_id) :
-    
+def ModifyAMC(request, amc_id) :
+    if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+        amc_object = AMC.objects.get(id=amc_id)
+        if request.method == 'POST' :
+            amc_object.start_date = request.POST['start_date']
+            amc_object.renewal_date = request.POST['renewal_date']
+            amc_object.price = request.POST['price']
+            amc_object.count = request.POST['count']
+            amc_object.save()
+            messages.success(request, 'The AMC record for the equipment has been modified successfully.')
+            return redirect('/view-all-amc')
+        else :
+            new_date = datetime.date.today()
+            if amc_object.renewal_date >= datetime.date.today() :
+                status = False
+            else :
+                status = True
+            return render(request, 'Manager/modifyAMC.html', {'amc' : amc_object, 'new_date' : new_date, 'status' : status})
+    else :
+        raise PermissionDenied()
+
+
+@login_required
+def DisplayAMCList(request) :
+    if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+        amc_objects = AMC.objects.all()
+        num_amcs = len(amc_objects)
+        return render(request, 'Manager/displayAMCList.html', {'amcs' : amc_objects, 'num_amcs' : num_amcs})
+    else :
+        raise PermissionDenied()
+
+
+@login_required
+def DeleteAMC(request, amc_id) :
+    if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+        amc_object = AMC.objects.get(id=amc_id)
+        if request.method == 'POST' :
+            amc_object.delete()
+            messages.success(request, 'The AMC record has been deleted successfully.')
+            return redirect('/view-all-amc')
+        else :
+            return render(request, 'Manager/deleteAMC.html', {'amc' : amc_object})
+    else :
+        raise PermissionDenied()
 
 
 # Pages common to Trainer and Manager

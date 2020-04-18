@@ -82,7 +82,15 @@ urlpatterns = [
 
     path('view-all-equipment/', views.DisplayAllEquipmentList, name='view-all-equipment'),
 
-    path('equipment-type/<int:eqty_id>/equipment-list', views.DisplayEquipmentListOfType, name='view-all-equipment-of-equipment-types'),
+    path('equipment-type/<int:eqty_id>/equipment-list/', views.DisplayEquipmentListOfType, name='view-all-equipment-of-equipment-types'),
+
+    path('add-amc/', views.AddAMC, name='add-amc'),
+
+    path('edit-amc/<int:amc_id>/', views.ModifyAMC, name='modify-amc'),
+
+    path('delete-amc/<int:amc_id>/', views.DeleteAMC, name='delete-amc'),
+
+    path('view-all-amc/', views.DisplayAMCList, name='view-all-amc'),
 
     # Links common to Manager and Trainer
 

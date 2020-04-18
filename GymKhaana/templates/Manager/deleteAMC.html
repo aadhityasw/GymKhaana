@@ -8,35 +8,39 @@
 {% block body %}
     {% if user.is_authenticated %}
         <br><br>
-        <h2>Delete Equipment</h2>
+        <h2>Delete AMC Record</h2>
         <br>
-        <h3>Are you sure about deleting the equipment record ?</h3>
+        <h3>Are you sure about deleting the amc record ?</h3>
         <br>
         <form method="post">
             {% csrf_token %}
             <table>
                 <tr>
                     <th>Equipment Name :</th>
-                    <td>{{ equipment.name }}</td>
-                </tr>
-                <tr>
-                    <th>Equipment Type :</th>
-                    <td>{{ equipment.equipment_type.name }}</td>
-                </tr>
-                <tr>
-                    <th>Product Details</th>
-                    <td>{{ equipment.detail }}</td>
-                </tr>
-                <tr>
-                    <th>Date of Purchase</th>
-                    <td>{{ equipment.date_of_purchase }}</td>
+                    <td>{{ amc.equipment.name }}</td>
                 </tr>
                 <tr>
                     <th>Equipment Type</th>
-                    <td>{{ equipment.equipment_type.name }}</td>
+                    <td>{{ amc.equipment.equipment_type.name }}</td>
                 </tr>
                 <tr>
-                    <td><button><a href="/view-all-equipment">Cancel</a></button></td>
+                    <th>Start Date</th>
+                    <td>{{ amc.start_date }}</td>
+                </tr>
+                <tr>
+                    <th>Renewal Date</th>
+                    <td>{{ amc.renewal_date }}</td>
+                </tr>
+                <tr>
+                    <th>Previous Renewals Count</th>
+                    <td>{{ amc.count }}</td>
+                </tr>
+                <tr>
+                    <th>Current Price</th>
+                    <td>{{ amc.price }}</td>
+                </tr>
+                <tr>
+                    <td><button><a href="/view-all-amc">Cancel</a></button></td>
                     <td><button type="submit">Delete</button></td>
                 </tr>
             </table>

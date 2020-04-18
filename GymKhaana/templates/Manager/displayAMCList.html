@@ -1,0 +1,46 @@
+{% extends 'Manager/base.html' %} 
+{% load static %}
+
+{% block header %}
+    <link rel="stylesheet" href="{% static 'css/common/list.css' %}" type="text/css">
+{% endblock %}
+
+{% block body %}
+    {% if user.is_authenticated %}
+        <br><br>
+        <h2 class="title">AMC Center</h2>
+        <br>
+        {% if num_amcs == 0 %}
+            <h1>There are no active AMC's avalible.</h1>
+        {% else %}
+            <table>
+                <tr>
+                    <th>Sno</th>
+                    <th>Equipment Model Number</th>
+                    <th>Equipment Type</th>
+                    <th>Start Date</th>
+                    <th>Next Renewal Date</th>
+                    <th>Total Renewals Count</th>
+                    <th>Current Price</th>
+                </tr>
+                {% for amc in amcs %}
+                    <tr>
+                        <th>{{ forloop.counter }}</th>
+                        <td>{{ amc.equipment.name }}</td>
+                        <td> <a href="/equipment-type/{{ amc.equipment.equipment_type.id }}/equipment-list">{{ amc.equipment.equipment_type.name }}</a></td>
+                        <td>{{ amc.start_date }}</td>
+                        <td>{{ amc.renewal_date }}</td>
+                        <td>{{ amc.count }}</td>
+                        <td>{{ amc.price }}</td>
+                        <td>
+                            <button><a href="/edit-amc/{{ amc.id }}">Edit</a></button>
+                        </td>
+                        <td>
+                            <button><a href="/delete-amc/{{ amc.id }}">Delete</a></button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+    {% endif %}
+{% endblock %}
