@@ -21,6 +21,12 @@
                     </td>
                 </tr>
                 <tr>
+                    <th>Registration</th>
+                    <td>
+                        <input type="text" name="reg_no" id="reg_no" value="{{ customer.reg_no }}">
+                    </td>
+                </tr>
+                <tr>
                     <th>Phone</th>
                     <td>
                         <input type="tel" name="mobile" id="mobile" value="{{ customer.mobile }}">
@@ -101,14 +107,14 @@
                             {% for eq in equipment_types %}
                                 <input
                                     type="checkbox"
-                                    id="{{ eq }}"
+                                    id="{{ eq.name }}"
                                     name="equipment"
-                                    value="{{ eq }}"
+                                    value="{{ eq.id }}"
                                     {% if eq in customer.equipment_interest.all %}
                                         checked
                                     {% endif %}
                                 >
-                                <label for="{{ eq }}">{{ eq }}</label>
+                                <label for="{{ eq.name }}">{{ eq.name }}</label>
                                 <br>
                             {% endfor %}
                         </fieldset>

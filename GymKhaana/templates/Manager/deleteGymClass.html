@@ -1,0 +1,63 @@
+{% extends 'Manager/base.html' %} 
+{% load static %}
+
+{% block header %}
+    <link rel="stylesheet" href="{% static 'css/common/delete.css' %}" type="text/css">
+{% endblock %}
+
+{% block body %}
+    {% if user.is_authenticated %}
+        <br><br>
+        <h1 class="title">Delete Gym Class - {{ gym_class.name }}</h1>
+        <br>
+        <h3>Are you sure about deleting this gym class?</h3>
+        <h5>If you do choose to delete this gym class the customers enrolled in this class would have no other gym class alloted to them.</h5>
+        <br>
+        <form method="post">
+            {% csrf_token %}
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <td>{{ gym_class.name }}</td>
+                </tr>
+                <tr>
+                    <th>Timings</th>
+                    <td>{{ gym_class.timings }}</td>
+                </tr>
+                <tr>
+                    <th>Customers</th>
+                    <td>
+                        {% if num_customers > 0 %}
+                            <ul>
+                                {% for customer in customers %}
+                                    <li>{{ customer.full_name }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            None
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Trainers Alloted</th>
+                    <td>
+                        {% if num_trainers > 0 %}
+                            <ul>
+                                {% for trainer in trainers %}
+                                    <li>{{ trainer.full_name }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            None
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2"><button type="submit">Delete</button></td>
+                </tr>
+                </tr>
+            </table>
+        </form>
+        <button><a href="/view-all-gym-class">Back</a></button>
+    {% endif %}
+{% endblock %}

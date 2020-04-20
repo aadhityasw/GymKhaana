@@ -1,0 +1,58 @@
+{% extends 'Manager/base.html' %} 
+{% load static %}
+
+{% block header %}
+    <link rel="stylesheet" href="{% static 'css/common/delete.css' %}" type="text/css">
+{% endblock %}
+
+{% block body %}
+    {% if user.is_authenticated %}
+        <br><br>
+        <h1 class="title">Gym Class - {{ gym_class.name }}</h1>
+        <br>
+        <table>
+            <tr>
+                <th>Name</th>
+                <td>{{ gym_class.name }}</td>
+            </tr>
+            <tr>
+                <th>Timings</th>
+                <td>{{ gym_class.timings }}</td>
+            </tr>
+            <tr>
+                <th>Customers Registered</th>
+                <td>
+                    {% if num_customers > 0 %}
+                        <ul>
+                            <li>
+                                {% for customer in customers %}
+                                    {{ customer.full_name }} - {{ customer.reg_no }}
+                                {% endfor %}
+                            </li>
+                        </ul>
+                    {% else %}
+                        None
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>Trainers Assigned</th>
+                <td>
+                    {% if num_trainers > 0 %}
+                        <ul>
+                            <li>
+                                {% for trainer in trainers %}
+                                    {{ trainer.full_name }}
+                                {% endfor %}
+                            </li>
+                        </ul>
+                    {% else %}
+                        None
+                    {% endif %}
+            </tr>
+        </table>
+        <button><a href="/edit-gym-class/{{ gym_class.id }}">Edit</a></button>
+        <button><a href="/view-all-gym-class">Back</a></button>
+        <button><a href="/delete-gym-class/{{ gym_class.id }}">Delete</a></button>
+    {% endif %}
+{% endblock %}

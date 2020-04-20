@@ -20,6 +20,10 @@
                 <td>{{ customer.full_name }}</td>
             </tr>
             <tr>
+                <th>Registration Number</th>
+                <td>{{ customer.reg_no }}</td>
+            </tr>
+            <tr>
                 <th>Email</th>
                 <td>{{ customer.account.email }}</td>
             </tr>
@@ -63,6 +67,7 @@
                 <tr>
                     <th>Gym Class</th>
                     <td>{{ customer.gym_class }}</td>
+                    <td><button><a href="/edit-customer/{{ customer.id }}/modify-gym-class">Modify</a></button></td>
                 </tr>
                 <tr>
                     <th>Membership Deadline</th>

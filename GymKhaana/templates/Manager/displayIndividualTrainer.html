@@ -51,7 +51,7 @@
                 <th>Gym Classes</th>
                 <td>
                     {% if num_gym_class == 0 %}
-                        <h1>No Class Allocated</h1>
+                        <h5>No Class Allocated</h5>
                     {% else %}
                         <ul>
                             {% for class in trainer.gym_class.all %}
@@ -60,6 +60,7 @@
                         </ul>
                     {% endif %}
                 </td>
+                <td><button><a href="/edit-trainer/{{ trainer.id }}/modify-gym-class">Modify</a></button></td>
             </tr>
         </table>
         <br><br>

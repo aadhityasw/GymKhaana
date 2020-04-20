@@ -58,7 +58,6 @@ class Package(models.Model) :
 
 class GymClass(models.Model) :
     name = models.CharField(max_length=200)
-    package_name = models.ForeignKey('Package', on_delete=models.CASCADE, related_name="gym_class_for_package")
     timings = models.CharField(max_length=100)
 
     class Meta:
@@ -66,7 +65,7 @@ class GymClass(models.Model) :
         verbose_name_plural = "Gym classes"
 
     def __str__(self):
-        stri = self.name + " - " + str(self.package_name.name)
+        stri = self.name
         return (stri)
 
 
@@ -77,8 +76,8 @@ class Membership(models.Model) :
         related_name="customer_membership",
         limit_choices_to={'role' : 'C'})
     deadline = models.DateTimeField()
-    package = models.ForeignKey('Package', on_delete=models.CASCADE, related_name="membership_for_package")
-    gym_class = models.ForeignKey('GymClass', on_delete=models.CASCADE, related_name="membership_for_gym_class")
+    package = models.ForeignKey('Package', on_delete=models.SET_NULL, related_name="membership_for_package", null=True)
+    gym_class = models.ForeignKey('GymClass', on_delete=models.SET_NULL, related_name="membership_for_gym_class", null=True)
 
     class Meta :
         verbose_name = "Membership"

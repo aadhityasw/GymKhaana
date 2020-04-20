@@ -93,6 +93,7 @@ def ChangeCustomerProfile(request) :
     if request.method == 'POST' :
         user_object.email = request.POST['email']
         customer_profile_object.full_name = request.POST['full_name']
+        customer_profile_object.reg_no = request.POST['reg_no']
         customer_profile_object.mobile = request.POST['mobile']
         customer_profile_object.address = request.POST['address']
         customer_profile_object.age = request.POST['age']
@@ -103,8 +104,8 @@ def ChangeCustomerProfile(request) :
         # Recieve all the names of the selected options from the checkbox, get their objects and pass them to the set() method of the respective object.
         interested_equipments = request.POST.getlist('equipment')
         equipment_id_list = []
-        for equipment_name in interested_equipments :
-            equipment_id_list.append(Equipmenttype.objects.get(name=equipment_name))
+        for equipment_id in interested_equipments :
+            equipment_id_list.append(Equipmenttype.objects.get(id=int(equipment_id)))
         customer_profile_object.equipment_interest.set(equipment_id_list)
         # Saving the modified objects
         user_object.save()
@@ -171,6 +172,42 @@ def ChangeTrainerProfile(request) :
     else :
         return render(request, 'Trainer/updateTrainer.html', {'trainer' : trainer_profile_object})
 
+
+@login_required
+def DisplayTrainerGymClassList(request) :
+    if request.user.role == 'T' :
+        trainer_profile_object = request.user.trainer_profile_account.get()
+        gym_class_objects = trainer_profile_object.gym_class.all()
+        num_gym_classes = len(gym_class_objects)
+        return render(request, 'Trainer/displayTrainerGymClassList.html', {'trainer' : trainer_profile_object, 'gym_classes' : gym_class_objects, 'num_gym_classes' : num_gym_classes})
+    else :
+        raise PermissionDenied()
+
+
+@login_required
+def DisplayTrainerIndividualGymClass(request, cls_id) :
+    if request.user.role == 'T' :
+        current_trainer_profile_object = request.user.trainer_profile_account.get()
+        possible_gym_class_objects = current_trainer_profile_object.gym_class.all()
+        gym_class_object = GymClass.objects.get(id=cls_id)
+        if gym_class_object in possible_gym_class_objects :
+            customer_profile_objects = gym_class_object.customer_profile_for_gym_class.all()
+            num_customers = len(customer_profile_objects)
+            trainer_profile_objects = gym_class_object.allocated_trainers.all()
+            num_trainers = len(trainer_profile_objects)
+            context = {
+                'gym_class' : gym_class_object,
+                'customers' : customer_profile_objects,
+                'num_customers' : num_customers,
+                'trainers' : trainer_profile_objects,
+                'num_trainers' : num_trainers,
+                'current_trainer' : current_trainer_profile_object,
+            }
+            return render(request, 'Trainer/displayTrainerIndividualGymClass.html', context)
+        else :
+            raise PermissionDenied()
+    else :
+        raise PermissionDenied()
 
 
 # Manager Pages
@@ -412,9 +449,9 @@ def CreateEquipment(request) :
             eq_name = request.POST['name']
             eq_detail = request.POST['detail']
             eq_purchase = request.POST['purchase']
-            eq_type_name = request.POST['eq_type']
-            eq_type = Equipmenttype.objects.get(name=eq_type_name)
-            equipment_object = Equipment.objects.create(name=eq_name, detail=eq_detail, date_of_purchase=eq_purchase, equipment_type=eq_type)
+            eq_type_id = request.POST['eq_type']
+            eq_type_object = Equipmenttype.objects.get(id=int(eq_type_id))
+            equipment_object = Equipment.objects.create(name=eq_name, detail=eq_detail, date_of_purchase=eq_purchase, equipment_type=eq_type_object)
             if equipment_object.id :
                 messages.success(request, 'The Equipment record has been created successfully.')
                 return redirect('/view-all-equipment')
@@ -446,8 +483,8 @@ def EditEquipment(request, eq_id) :
             equipment_object.name = request.POST['name']
             equipment_object.detail = request.POST['detail']
             equipment_object.date_of_purchase = request.POST['purchase']
-            eq_type_name = request.POST['eq_type']
-            equipment_object.equipment_type = Equipmenttype.objects.get(name=eq_type_name)
+            eq_type_id = request.POST['eq_type']
+            equipment_object.equipment_type = Equipmenttype.objects.get(id=int(eq_type_id))
             equipment_object.save()
             messages.success(request, 'The Equipment record has been modified successfully.')
             return redirect( '/view-all-equipment')
@@ -489,8 +526,8 @@ def DisplayEquipmentListOfType(request, eqty_id) :
 def AddAMC(request) :
     if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
         if request.method == 'POST' :
-            eq_name = request.POST['equipment']
-            equipment_object = Equipment.objects.get(name=eq_name)
+            eq_id = request.POST['equipment']
+            equipment_object = Equipment.objects.get(id=int(eq_id))
             start = request.POST['start_date']
             renew = request.POST['renewal_date']
             present_price = request.POST['price']
@@ -555,6 +592,252 @@ def DeleteAMC(request, amc_id) :
         raise PermissionDenied()
 
 
+@login_required
+def CreateGymPackage(request) :
+    if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+        if request.method == 'POST' :
+            pkg_name = request.POST['name']
+            pkg_price = request.POST['price']
+            pkg_duration = request.POST['duration']
+            package_object = Package.objects.create(name=pkg_name, price=pkg_price, duration=pkg_duration)
+            if package_object.id :
+                messages.success(request, 'A new Package record has been created.')
+                return redirect('/view-all-gym-package') 
+            else :
+                messages.error(request, 'An Error occured while creating the record.')
+        else :
+            return render(request, 'Manager/createGymPackage.html')
+    else :
+        raise PermissionDenied()
+
+@login_required
+def DisplayGymPackageList(request) :
+    if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+        gym_package_objects = Package.objects.all()
+        num_gym_packages = len(gym_package_objects)
+        return render(request, 'Manager/displayGymPackageList.html', {'packages' : gym_package_objects, 'num_packages' : num_gym_packages})
+    else :
+        raise PermissionDenied()
+
+
+@login_required
+def DisplayIndividualGymPackage(request, pkg_id) :
+    if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+        gym_package_object = Package.objects.get(id=pkg_id)
+        customer_profile_objects = gym_package_object.customer_profile_for_package.all()
+        num_customers = len(customer_profile_objects)
+        context = {
+            'package' : gym_package_object,
+            'customers' : customer_profile_objects,
+            'num_customers' : num_customers,
+        }
+        return render(request, 'Manager/displayIndividualGymPackage.html', context)
+    else :
+        raise PermissionDenied()
+
+
+@login_required
+def EditGymPackage(request, pkg_id) :
+    if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+        gym_package_object = Package.objects.get(id=pkg_id)
+        if request.method == 'POST' :
+            gym_package_object.name = request.POST['name']
+            gym_package_object.price = request.POST['price']
+            gym_package_object.duration = request.POST['duration']
+            gym_package_object.save()
+            messages.success(request, 'The Gym Package record has been modified successfully.')
+            return redirect('/view-all-gym-package')
+        else :
+            customer_profile_objects = gym_package_object.customer_profile_for_package.all()
+            num_customers = len(customer_profile_objects)
+            return render(request, 'Manager/editGymPackage.html', {'package' : gym_package_object, 'num_customers' : num_customers})
+    else :
+        raise PermissionDenied()
+
+
+@login_required
+def DeleteGymPackage(request, pkg_id) :
+    if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+        gym_package_object = Package.objects.get(id=pkg_id)
+        customer_profile_objects = gym_package_object.customer_profile_for_package.all()
+        if len(customer_profile_objects) > 0 :
+            messages.error(request, 'There are some customers associated with this Gym Package. Contact the administrator for further assistence in this matter.')
+            raise PermissionDenied()
+        else :
+            if request.method == 'POST' :
+                gym_package_object.delete()
+                messages.success(request, 'The Gym Package record has been deleted.')
+                return redirect('/view-all-gym-package')
+            else :
+                return render(request, 'Manager/deleteGymPackage.html', {'package' : gym_package_object})
+    else :
+        raise PermissionDenied()
+
+
+@login_required
+def CreateGymClass(request) :
+    if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+        if request.method == 'POST' :
+            class_name = request.POST['name']
+            class_timings = request.POST['timings']
+            gym_class_object = GymClass.objects.create(name=class_name, timings=class_timings)
+            if gym_class_object.id :
+                messages.success(request, 'A new Gym Class record has been created.')
+                return redirect('/view-all-gym-class') 
+            else :
+                messages.error(request, 'An Error occured while creating the record.')
+        else :
+            return render(request, 'Manager/createGymClass.html')
+    else :
+        raise PermissionDenied()
+
+
+@login_required
+def DisplayGymClassList(request) :
+    if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+        gym_class_objects = GymClass.objects.all()
+        num_gym_classes = len(gym_class_objects)
+        return render(request, 'Manager/displayGymClassList.html', {'gym_classes' : gym_class_objects, 'num_gym_classes' : num_gym_classes})
+    else :
+        raise PermissionDenied()
+
+
+@login_required
+def DisplayIndividualGymClass(request, cls_id) :
+    if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+        gym_class_object = GymClass.objects.get(id=cls_id)
+        customer_profile_objects = gym_class_object.customer_profile_for_gym_class.all()
+        num_customers = len(customer_profile_objects)
+        trainer_profile_objects = gym_class_object.allocated_trainers.all()
+        num_trainers = len(trainer_profile_objects)
+        context = {
+            'gym_class' : gym_class_object,
+            'customers' : customer_profile_objects,
+            'num_customers' : num_customers,
+            'trainers' : trainer_profile_objects,
+            'num_trainers' : num_trainers,
+        }
+        return render(request, 'Manager/displayIndividualGymClass.html', context)
+    else :
+        raise PermissionDenied()
+
+
+@login_required
+def EditGymClass(request, cls_id) :
+    if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+        gym_class_object = GymClass.objects.get(id=cls_id)
+        if request.method == 'POST' :
+            gym_class_object.name = request.POST['name']
+            gym_class_object.timings = request.POST['timings']
+            gym_class_object.save()
+            messages.success(request, 'The Gym Class record has been modified successfully.')
+            return redirect('/view-all-gym-class')
+        else :
+            return render(request, 'Manager/editGymClass.html', {'gym_class' : gym_class_object})
+    else :
+        raise PermissionDenied()
+
+
+@login_required
+def DeleteGymClass(request, cls_id) :
+    if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+        gym_class_object = GymClass.objects.get(id=cls_id)
+        customer_profile_objects = gym_class_object.customer_profile_for_gym_class.all()
+        trainer_profile_objects = gym_class_object.allocated_trainers.all()
+        if request.method == 'POST' :
+            # All the customers who have been registered under this class should be cleared from this class.
+            for cust in customer_profile_objects :
+                cust.gym_class = None
+                cust.save()
+            # All the trainers who take care of this class should not have this class under them.
+            for trainer in trainer_profile_objects :
+                trainer_gym_classes = list(trainer.gym_class.all())
+                if gym_class_object in trainer_gym_classes :
+                    trainer_gym_classes.remove(gym_class_object)
+                trainer.gym_class.set(trainer_gym_classes)
+                trainer.save()
+            gym_class_object.delete()
+            messages.success(request, 'The Gym Class record has been deleted.')
+            if len(customer_profile_objects) > 0 :
+                # There are a few customers now who have not been allocated any new gym class.
+                return redirect(AllocateCustomerGymClass, customers=customer_profile_objects )
+            else :
+                # There are no customers who have not been alloted any class.
+                return redirect('/view-all-gym-class')
+        else :
+            num_customers = len(customer_profile_objects)
+            num_trainers = len(trainer_profile_objects)
+            context = {
+                'gym_class' : gym_class_object,
+                'customers' : customer_profile_objects,
+                'num_customers' : num_customers,
+                'trainers' : trainer_profile_objects,
+                'num_trainers' : num_trainers,
+            }
+            return render(request, 'Manager/deleteGymClass.html', context)
+    else :
+        raise PermissionDenied()
+
+
+@login_required
+def AllocateCustomerGymClass(request, customers=None) :
+    if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+        if customers != None :
+            customer_profile_objects = customers
+        else :
+            customer_profile_objects = CustomerProfile.objects.filter(gym_class=None)
+        if request.method == 'POST' :
+            for customer in customer_profile_objects :
+                gym_class_id = request.POST[str(customer.id)]
+                if gym_class_id != 'None' :
+                    customer.gym_class = GymClass.objects.get(id=int(gym_class_id))
+                    customer.save()
+            return redirect('/view-customer-list')
+        else :
+            num_customer_profiles = len(customer_profile_objects)
+            gym_classes = GymClass.objects.all()
+            return render(request, 'Manager/allocateCustomerGymClass.html', {'customers' : customer_profile_objects, 'num_customers' : num_customer_profiles, 'gym_classes' : gym_classes})
+    else :
+        raise PermissionDenied()
+
+
+@login_required
+def ModifyCustomerGymClass(request, cust_id) :
+    if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+        customer_profile_object = CustomerProfile.objects.get(id=cust_id)
+        if request.method == 'POST' :
+            gym_class_id = request.POST['gym_class']
+            customer_profile_object.gym_class = GymClass.objects.get(id=int(gym_class_id))
+            customer_profile_object.save()
+            messages.success(request, 'The Gym Class record has been allocated for the customer.')
+            return redirect('/view-customer-list')
+        else :
+            gym_classes = GymClass.objects.all()
+            return render(request, 'Manager/modifyCustomerGymClass.html', {'customer' : customer_profile_object, 'gym_classes' : gym_classes})
+    else :
+        raise PermissionDenied()
+
+
+@login_required
+def ModifyTrainerGymClass(request, tra_id) :
+    if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+        trainer_profile_object = TrainerProfile.objects.get(id=tra_id)
+        if request.method == 'POST' :
+            gym_class_ids = request.POST.getlist('gym_class')
+            gym_classes = []
+            for gym_class_itr in gym_class_ids :
+                gym_classes.append(GymClass.objects.get(id=int(gym_class_itr)))
+            trainer_profile_object.gym_class.set(gym_classes)
+            trainer_profile_object.save()
+            messages.success(request, 'The Trainer has been allocated to the selected gym classes.')
+            return redirect('/view-trainer-list')
+        else :
+            gym_classes = GymClass.objects.all()
+            return render(request, 'Manager/modifyTrainerGymClass.html', {'trainer' : trainer_profile_object, 'gym_classes' : gym_classes})
+    else :
+        raise PermissionDenied()
+
+
 # Pages common to Trainer and Manager
 
 
@@ -588,10 +871,10 @@ def EditIndividualNotification(request, not_id) :
             # Format the recieved date time string into a datetime object that will be saved.
             expiry_date_time = datetime.datetime.strptime(request.POST['expiry'].replace('.', '') , '%B %d, %Y, %I:%M %p')
             notification_object.expiry = expiry_date_time.replace(tzinfo=None)
-            gym_class_names = request.POST.getlist('gym_class')
+            gym_class_ids = request.POST.getlist('gym_class')
             gym_classes = []
-            for gym_class_itr in gym_class_names :
-                gym_classes.append(GymClass.objects.get(name=gym_class_itr))
+            for gym_class_itr in gym_class_ids :
+                gym_classes.append(GymClass.objects.get(id=int(gym_class_itr)))
             notification_object.gym_class.set(gym_classes)
             notification_object.save()
             messages.success(request, 'Details entered have been updated.') 
@@ -620,10 +903,10 @@ def PostNotification(request) :
             notification_content = request.POST['content']
             notification_expiry = datetime.datetime.strptime(request.POST['expiry'].replace('.', '') , '%B %d, %Y, %I:%M %p')
             notification_expiry = notification_expiry.replace(tzinfo=None)
-            gym_class_names = request.POST.getlist('gym_class')
+            gym_class_ids = request.POST.getlist('gym_class')
             gym_classes = []
-            for gym_class_itr in gym_class_names :
-                gym_classes.append(GymClass.objects.get(name=gym_class_itr))
+            for gym_class_itr in gym_class_ids :
+                gym_classes.append(GymClass.objects.get(id=int(gym_class_itr)))
             notification_object = Notification.objects.create(author=request.user, content=notification_content, expiry=notification_expiry)
             notification_object.gym_class.set(gym_classes)
             notification_object.save()

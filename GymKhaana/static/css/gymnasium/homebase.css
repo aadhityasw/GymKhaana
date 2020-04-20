@@ -89,9 +89,9 @@ body{
     position: relative;
     margin-bottom: 40px;
     width: 100%;
-    /*height: fit-content;*/
     padding-bottom: 20px;
     min-height: 100%;
+    height: fit-content;
 }
 
 .footer{

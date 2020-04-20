@@ -45,14 +45,14 @@
                             {% for gc in gym_classes %}
                                 <input
                                     type="checkbox"
-                                    id="{{ gc.name }}"
+                                    id="{{ gc.id }}"
                                     name="gym_class"
-                                    value="{{ gc.name }}"
+                                    value="{{ gc.id }}"
                                     {% if gc in notification.gym_class.all %}
                                         checked
                                     {% endif %}
                                 >
-                                <label for="{{ gc.name }}">{{ gc.name }}</label>
+                                <label for="{{ gc.id }}">{{ gc.name }}</label>
                                 <br>
                             {% endfor %}
                         </fieldset>

@@ -30,7 +30,7 @@
                         <select name="eq_type" id="eq_type">
                             {% for equipment_type_obj in equipment_types %}
                                 <option
-                                    value="{{ equipment_type_obj.name }}"
+                                    value="{{ equipment_type_obj.id }}"
                                     {% if equipment_type_obj == equipment.equipment_type %}
                                         selected
                                     {% endif %}

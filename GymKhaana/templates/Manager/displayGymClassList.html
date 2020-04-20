@@ -1,0 +1,34 @@
+{% extends 'Manager/base.html' %} 
+{% load static %}
+
+{% block header %}
+    <link rel="stylesheet" href="{% static 'css/common/list.css' %}" type="text/css">
+{% endblock %}
+
+{% block body %}
+    {% if user.is_authenticated %}
+        <br><br>
+        <h1 class="title">Gym Class List</h1>
+        <br>
+        {% if num_gym_classes > 0 %}
+            <table>
+                <tr>
+                    <th>Sno</th>
+                    <th>Gym Class Name</th>
+                    <th>Timings</th>
+                </tr>
+                {% for gym_class in gym_classes %}
+                    <tr>
+                        <th>{{ forloop.counter }}</th>
+                        <td><a href="/view-gym-class/{{ gym_class.id }}">{{ gym_class.name }}</a></td>
+                        <td>{{ gym_class.timings }}</td>
+                        <td><button><a href="/edit-gym-class/{{ gym_class.id }}">Edit</a></button></td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <h2>There are no gym classes avalible right now <a href="/create-gym-class">Click Here</a> to create a new one.</h2>
+        {% endif %}
+        <button class="save"><a href="/create-gym-class">Create new Gym Class</a></button>
+    {% endif %}
+{% endblock %}

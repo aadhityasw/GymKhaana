@@ -1,8 +1,8 @@
 .pagebody {
     padding: 0%;
     background: linear-gradient(to bottom right, rgb(1, 255, 255), rgb(168, 7, 231));
-    height: 100%;
     text-align: center;
+    padding-bottom: 4em;
 }
 
 h1{

@@ -36,6 +36,10 @@ urlpatterns = [
 
     path('edit-trainer-profile/', views.ChangeTrainerProfile, name='edit-trainer-profile'),
 
+    path('trainer/view-gym-class-list/', views.DisplayTrainerGymClassList, name='view-trainer-gym-class-list'),
+
+    path('trainer/view-individual-gym-class/<int:cls_id>/', views.DisplayTrainerIndividualGymClass, name='view-individual-trainer-gym-class'),
+
     # Manager Website Links
 
     path('manager-profile/', views.DisplayManagerProfile, name='manager-profile'),
@@ -91,6 +95,32 @@ urlpatterns = [
     path('delete-amc/<int:amc_id>/', views.DeleteAMC, name='delete-amc'),
 
     path('view-all-amc/', views.DisplayAMCList, name='view-all-amc'),
+
+    path('view-all-gym-package/', views.DisplayGymPackageList, name='view-all-gym-package'),
+
+    path('create-gym-package/', views.CreateGymPackage, name='create-gym-package'),
+
+    path('view-gym-package/<int:pkg_id>/', views.DisplayIndividualGymPackage, name='view-gym-package'),
+
+    path('edit-gym-package/<int:pkg_id>/', views.EditGymPackage, name='edit-gym-package'),
+
+    path('delete-gym-package/<int:pkg_id>/', views.DeleteGymPackage, name='delete-gym-package'),
+
+    path('create-gym-class/', views.CreateGymClass, name='create-gym-class'),
+
+    path('view-all-gym-class/', views.DisplayGymClassList, name='view-all-gym-class'),
+
+    path('view-gym-class/<int:cls_id>/', views.DisplayIndividualGymClass, name='view-gym-class'),
+
+    path('edit-gym-class/<int:cls_id>/', views.EditGymClass, name='edit-gym-class'),
+
+    path('delete-gym-class/<int:cls_id>/', views.DeleteGymClass, name='delete-gym-class'),
+
+    path('allocate-customer-gym-class/', views.AllocateCustomerGymClass, name='allocate-customer-gym-class'),
+
+    path('edit-customer/<int:cust_id>/modify-gym-class', views.ModifyCustomerGymClass, name='modify-customer-gym-class'),
+
+    path('edit-trainer/<int:tra_id>/modify-gym-class', views.ModifyTrainerGymClass, name='modify-trainer-gym-class'),
 
     # Links common to Manager and Trainer
 

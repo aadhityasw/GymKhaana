@@ -17,6 +17,7 @@ class CustomUser(AbstractUser) :
 class CustomerProfile(models.Model) :
     account = models.ForeignKey('CustomUser', on_delete=models.CASCADE, related_name="customer_profile_account", limit_choices_to={'role' : 'C'})
     full_name = models.CharField(max_length=100, null=False, blank=False, verbose_name="Full Name", default='-')
+    reg_no = models.CharField(max_length=15, null=False, blank=False, verbose_name='Regustration Number', default='-')
     mobile = models.IntegerField(null=False, blank=False)
     medical_history = models.TextField(max_length=1000, blank=False)
     gender = models.CharField(max_length=1, choices=[('M', 'Male'), ('F', 'Female'), ('O', 'Other')], default='O')
@@ -24,8 +25,8 @@ class CustomerProfile(models.Model) :
     weight = models.IntegerField(null=False, blank=False)
     allergies = models.TextField(max_length=500)
     address = models.TextField(max_length=500)
-    gym_package = models.ForeignKey('gymnasium.Package', on_delete=models.CASCADE, related_name="customer_profile_for_package")
-    gym_class = models.ForeignKey('gymnasium.GymClass', on_delete=models.CASCADE, related_name="customer_profile_for_gym_class", null=True, blank=True)
+    gym_package = models.ForeignKey('gymnasium.Package', on_delete=models.SET_NULL, related_name="customer_profile_for_package", null=True, blank=True, default=None)
+    gym_class = models.ForeignKey('gymnasium.GymClass', on_delete=models.SET_NULL, related_name="customer_profile_for_gym_class", null=True, blank=True, default=None)
     equipment_interest = models.ManyToManyField(Equipmenttype, related_name="customer_profile_for_equipment_interest")
 
     def __str__(self):

@@ -18,7 +18,7 @@
                     <td>
                         <select name="equipment" id="equipment">
                             {% for equipment in equipments %}
-                                <option value="{{ equipment.name }}">{{ equipment.name }} - {{ equipment.equipment_type.name }}</option>
+                                <option value="{{ equipment.id }}">{{ equipment.name }} - {{ equipment.equipment_type.name }}</option>
                             {% endfor %}
                         </select>
                     </td>

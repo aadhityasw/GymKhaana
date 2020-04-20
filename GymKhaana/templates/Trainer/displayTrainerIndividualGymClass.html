@@ -1,0 +1,58 @@
+{% extends 'Trainer/base.html' %} 
+{% load static %}
+
+{% block header %}
+    <link rel="stylesheet" href="{% static 'css/common/list.css' %}" type="text/css">
+{% endblock %}
+
+{% block body %}
+    {% if user.is_authenticated %}
+        <br><br>
+        <h1 class="title">Trainer's alloted Gym Class List</h1>
+        <br>
+        <h2>Trainer : {{ current_trainer.full_name }}</h2>
+        <br>
+        <table>
+            <tr>
+                <th>Name</th>
+                <td>{{ gym_class.name }}</td>
+            </tr>
+            <tr>
+                <th>Timings</th>
+                <td>{{ gym_class.timings }}</td>
+            </tr>
+            <tr>
+                <th>Customers Registered</th>
+                <td>
+                    {% if num_customers > 0 %}
+                        <ul>
+                            <li>
+                                {% for customer in customers %}
+                                    {{ customer.full_name }} - {{ customer.reg_no }}
+                                {% endfor %}
+                            </li>
+                        </ul>
+                    {% else %}
+                        None
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th> Co - Trainers Assigned</th>
+                <td>
+                    {% if num_trainers > 0 %}
+                        <ul>
+                            <li>
+                                {% for trainer in trainers %}
+                                    {{ trainer.full_name }}
+                                {% endfor %}
+                            </li>
+                        </ul>
+                    {% else %}
+                        None
+                    {% endif %}
+            </tr>
+        </table>
+        <button class="save"><a href="/trainer/view-gym-class-list/">Back</a></button>
+    {% endif %}
+{% endblock %}

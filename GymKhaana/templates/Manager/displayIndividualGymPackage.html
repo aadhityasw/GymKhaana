@@ -1,0 +1,49 @@
+{% extends 'Manager/base.html' %} 
+{% load static %}
+
+{% block header %}
+    <link rel="stylesheet" href="{% static 'css/common/delete.css' %}" type="text/css">
+{% endblock %}
+
+{% block body %}
+    {% if user.is_authenticated %}
+        <br><br>
+        <h1 class="title">Gym Package - {{ package.name }}</h1>
+        <br>
+        <table>
+            <tr>
+                <th>Name</th>
+                <td>{{ package.name }}</td>
+            </tr>
+            <tr>
+                <th>Duration</th>
+                <td>{{ package.duration }}</td>
+            </tr>
+            <tr>
+                <th>Price</th>
+                <td>{{ package.price }}</td>
+            </tr>
+            <tr>
+                <th>Customers Registered</th>
+                <td>
+                    {% if num_customers > 0 %}
+                        <ul>
+                            <li>
+                                {% for customer in customers %}
+                                    {{ customer.full_name }}
+                                {% endfor %}
+                            </li>
+                        </ul>
+                    {% else %}
+                        None
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+        <button><a href="/edit-gym-package/{{ package.id }}">Edit</a></button>
+        <button><a href="/view-all-gym-package">Back</a></button>
+        {% if num_customers == 0 %}
+            <button><a href="/delete-gym-package/{{ package.id }}">Delete</a></button>
+        {% endif %}
+    {% endif %}
+{% endblock %}
