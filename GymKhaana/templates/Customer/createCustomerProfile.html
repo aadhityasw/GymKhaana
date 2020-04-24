@@ -1,0 +1,84 @@
+{% extends 'Customer/base.html' %} 
+{% load static %}
+
+{% block header %}
+    <link rel="stylesheet" href="{% static 'css/user/updateUser.css' %}" type="text/css">
+{% endblock %}
+
+{% block body %}
+    {% if user.is_authenticated %}
+        <br>
+        <h1 class="title">Welcome {{ user }}</h1>
+        <br>
+        <h2>Create Customer Profile</h2>
+        <form method="post">
+            {% csrf_token %}
+            <table  class="tabla1">
+                <tr>
+                    <th>Full Name</th>
+                    <td><input type="text" name="full_name" id="full_name"></td>
+                </tr>
+                <tr>
+                    <th>Registration</th>
+                    <td><input type="text" name="reg_no" id="reg_no"></td>
+                </tr>
+                <tr>
+                    <th>Phone</th>
+                    <td><input type="tel" name="mobile" id="mobile"></td>
+                </tr>
+                <tr>
+                    <th>Address</th>
+                    <td><textarea name="address" id="address" cols="30" rows="10"></textarea></td>
+                </tr>
+                <tr>
+                    <th>Gender</th>
+                    <td>
+                        <select name="gender" id="gender">
+                            <option value="M">Male</option>
+                            <option value="F">Female</option>
+                            <option value="O">Other</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Age</th>
+                    <td><input type="number" name="age" id="age"></td>
+                </tr>
+                <tr>
+                    <th>Weight</th>
+                    <td><input type="number" name="weight" id="weight"></td>
+                </tr>
+                <tr>
+                    <th>Medical History</th>
+                    <td><textarea name="medical_history" id="medical_history" cols="30" rows="10"></textarea></td>
+                </tr>
+                <tr>
+                    <th>Allergies</th>
+                    <td><textarea name="allergies" id="allergies" cols="30" rows="10"></textarea></td>
+                </tr>
+                <tr>
+                    <th>Interested Equipments</th>
+                    <td>
+                        <fieldset>
+                            <legend>Equipments</legend>
+                            {% for eq in equipment_types %}
+                                <input
+                                    type="checkbox"
+                                    id="{{ eq.name }}"
+                                    name="equipment"
+                                    value="{{ eq.id }}"
+                                >
+                                <label for="{{ eq.name }}">{{ eq.name }}</label>
+                                <br>
+                            {% endfor %}
+                        </fieldset>
+                    </td>
+                </tr>
+                <br><br>
+                <tr>
+                    <td colspan="2"><button class="save" type="submit">Submit</button></td>
+                </tr>
+            </table>
+        </form>
+    {% endif %}
+{% endblock %}

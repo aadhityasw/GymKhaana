@@ -1,0 +1,28 @@
+{% extends 'Customer/base.html' %} 
+{% load static %}
+
+{% block header %}
+    <link rel="stylesheet" href="{% static 'css/customer/membershipRegistration.css' %}" type="text/css">
+{% endblock %}
+
+{% block body %}
+    {% if user.is_authenticated %}
+        <br><br>
+        <h1>{{ customer.full_name }}</h1>
+        <h5>Choose a Package</h5>
+        <br>
+        <form method="post">
+            {% csrf_token %}
+            <h2>Choosen Package</h2>
+            <div>
+                <h5>{{ package.name }}</h5>
+                <h6>Rs {{ package.price }}</h6>
+                <h6>New deadline after payment completion : {{ future_deadline }}</h6>
+            </div>
+            On clicking this you will be redirected to a payment portal to complete the purchase.
+            <button type="submit">Pay Now</button>
+        </form>
+        <button><a href="/membership-registration">Back</a></button>
+        <button><a href="/customer-profile">Cancel</a></button>
+    {% endif %}
+{% endblock %}

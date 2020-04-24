@@ -1,18 +1,21 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django import forms
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth import update_session_auth_hash, authenticate, login
 from django.contrib.auth.forms import PasswordChangeForm
 from django.core.exceptions import PermissionDenied
 from django.db import models
+from django.http import HttpResponse
+from django.shortcuts import render, redirect
 
 from users.models import CustomUser, CustomerProfile, TrainerProfile, ManagerProfile
+from users.forms import UserSignUpForm
 from .models import Membership, Package, Notification, Equipment, Equipmenttype, Announcement, GymClass, AMC
+
 import datetime
 
 
-# General Website Pages
+# ------------------------------------------------------- General Website Pages -------------------------------------------------------
 
 
 def HomePage(request) :
@@ -66,55 +69,202 @@ def changePassword(request) :
     })
 
 
-# Customer Pages
+def UserSignUp(request, role='C') :
+    if role in ['T', 'M', 'A'] and request.user==None :
+        raise forms.ValidationError('You do not have the authority to create User of this category.')
+    elif role in ['C', 'T', 'M'] :
+        if request.method == 'POST':
+            form = UserSignUpForm(request.POST)
+            if form.is_valid():
+                userObjForm = form.cleaned_data
+                username = userObjForm['username']
+                email =  userObjForm['email']
+                password =  userObjForm['password']
+                if not (CustomUser.objects.filter(username=username).exists() or CustomUser.objects.filter(email=email).exists()):
+                    user_object = CustomUser.objects.create_user(username, email, password)
+                    user_object.role = role
+                    user_object.save()
+                    user = authenticate(username = username, password = password)
+                    login(request, user)
+                    if role == 'C' :
+                        return redirect(CreateCustomerProfile)
+                    elif role == 'T' :
+                        return redirect(CreateTrainerProfile, user_id=user_object.id)  
+                    elif role == 'M' :
+                          return redirect(CreateManagerProfile, user_id=user_object.id)
+                else:
+                    raise forms.ValidationError('Looks like a username with that email or password already exists')
+        else:
+            form = UserSignUpForm()
+        return render(request, 'registration/signup.html', {'form' : form})
+    elif role == 'A' :
+        raise forms.ValidationError('You do not have the authority to create a Admin Level User.')
+    else :
+        raise forms.ValidationError('Invalid Role. This system should not be intervened. Do not try this again !!!')
+
+
+# ---------------------------------------------------------- Customer Pages -----------------------------------------------------------
+
+
+@login_required
+def CreateCustomerProfile(request) :
+    if request.user.customer_profile_account.first() :
+        return redirect(DisplayCustomerProfile)
+    else :
+        if request.method == 'POST' :
+            user_object = CustomUser.objects.get(username=request.user.username)
+            customer_profile_object = CustomerProfile.objects.create(
+                account = request.user,
+                full_name = request.POST['full_name'],
+                reg_no = request.POST['reg_no'],
+                mobile = request.POST['mobile'],
+                address = request.POST['address'],
+                age = request.POST['age'],
+                weight = request.POST['weight'],
+                medical_history = request.POST['medical_history'],
+                allergies = request.POST['allergies'],
+                gender = request.POST['gender']
+            )
+            # Recieve all the names of the selected options from the checkbox, get their objects and pass them to the set() method of the respective object.
+            interested_equipments = request.POST.getlist('equipment')
+            equipment_id_list = []
+            for equipment_id in interested_equipments :
+                equipment_id_list.append(Equipmenttype.objects.get(id=int(equipment_id)))
+            customer_profile_object.equipment_interest.set(equipment_id_list)
+            # Saving the modified objects
+            user_object.save()
+            customer_profile_object.save()
+            messages.success(request, 'Details entered have been entered.')
+            return redirect('/initial-gym-registration-choice')
+        else :
+            equipment_types = Equipmenttype.objects.all()
+            return render(request, 'Customer/createCustomerProfile.html', {'equipment_types' : equipment_types})
 
 
 @login_required
 def DisplayCustomerProfile(request) :
     user_object = CustomUser.objects.get(username=request.user)
-    """customer_profile_object = CustomerProfile.objects.get(account=user_object)
-    membership_object = Membership.objects.get(name=user_object)"""
-    customer_profile_object = user_object.customer_profile_account.get()
-    membership_object = user_object.customer_membership.get()
-    membership_deadline = membership_object.deadline
-    membership_deadline = membership_deadline.replace(tzinfo=None)
-    if membership_deadline >= datetime.datetime.now(tz=None) :
-        membership_status = "Active"
+    if user_object.customer_profile_account.first() :
+        customer_profile_object = user_object.customer_profile_account.get()
+        if not customer_profile_object.customer_membership.first() :
+            membership_status = "Inactive"
+            membership_object = None
+        else :
+            membership_object = customer_profile_object.customer_membership.get()
+            membership_deadline = membership_object.deadline
+            membership_deadline = membership_deadline.replace(tzinfo=None)
+            if membership_deadline >= datetime.datetime.now(tz=None) :
+                membership_status = "Active"
+            else :
+                membership_status = "Inactive"
+        return render(request, 'Customer/profile.html', {'customer' : customer_profile_object, 'membership_status' : membership_status, 'membership' : membership_object})
     else :
-        membership_status = "Inactive"
-    return render(request, 'Customer/profile.html', {'customer' : customer_profile_object, 'membership_status' : membership_status, 'membership' : membership_object})
+        return redirect(CreateCustomerProfile)
 
 
 @login_required
 def ChangeCustomerProfile(request) :
     user_object = CustomUser.objects.get(username=request.user)
-    """customer_profile_object = CustomerProfile.objects.get(account=user_object)"""
-    customer_profile_object = user_object.customer_profile_account.get()
-    if request.method == 'POST' :
-        user_object.email = request.POST['email']
-        customer_profile_object.full_name = request.POST['full_name']
-        customer_profile_object.reg_no = request.POST['reg_no']
-        customer_profile_object.mobile = request.POST['mobile']
-        customer_profile_object.address = request.POST['address']
-        customer_profile_object.age = request.POST['age']
-        customer_profile_object.weight = request.POST['weight']
-        customer_profile_object.medical_history = request.POST['medical_history']
-        customer_profile_object.allergies = request.POST['allergies']
-        customer_profile_object.gender = request.POST['gender']
-        # Recieve all the names of the selected options from the checkbox, get their objects and pass them to the set() method of the respective object.
-        interested_equipments = request.POST.getlist('equipment')
-        equipment_id_list = []
-        for equipment_id in interested_equipments :
-            equipment_id_list.append(Equipmenttype.objects.get(id=int(equipment_id)))
-        customer_profile_object.equipment_interest.set(equipment_id_list)
-        # Saving the modified objects
-        user_object.save()
-        customer_profile_object.save()
-        messages.success(request, 'Details entered have been updated.')
-        return redirect('/customer-profile')
+    if user_object.customer_profile_account.first() :
+        customer_profile_object = user_object.customer_profile_account.get()
+        if request.method == 'POST' :
+            user_object.email = request.POST['email']
+            customer_profile_object.full_name = request.POST['full_name']
+            customer_profile_object.reg_no = request.POST['reg_no']
+            customer_profile_object.mobile = request.POST['mobile']
+            customer_profile_object.address = request.POST['address']
+            customer_profile_object.age = request.POST['age']
+            customer_profile_object.weight = request.POST['weight']
+            customer_profile_object.medical_history = request.POST['medical_history']
+            customer_profile_object.allergies = request.POST['allergies']
+            customer_profile_object.gender = request.POST['gender']
+            # Recieve all the names of the selected options from the checkbox, get their objects and pass them to the set() method of the respective object.
+            interested_equipments = request.POST.getlist('equipment')
+            equipment_id_list = []
+            for equipment_id in interested_equipments :
+                equipment_id_list.append(Equipmenttype.objects.get(id=int(equipment_id)))
+            customer_profile_object.equipment_interest.set(equipment_id_list)
+            # Saving the modified objects
+            user_object.save()
+            customer_profile_object.save()
+            messages.success(request, 'Details entered have been updated.')
+            return redirect('/customer-profile')
+        else :
+            equipment_types = Equipmenttype.objects.all()
+            return render(request, 'Customer/updateCustomer.html', {'customer' : customer_profile_object, 'equipment_types' : equipment_types})
     else :
-        equipment_types = Equipmenttype.objects.all()
-        return render(request, 'Customer/updateCustomer.html', {'customer' : customer_profile_object, 'equipment_types' : equipment_types})
+        return redirect(CreateCustomerProfile)
+
+
+@login_required
+def GymRegistrationChoice(request) :
+    if request.user.role == 'C' :
+        gym_packages = Package.objects.all()
+        return render(request, 'Customer/gymRegistrationChoice.html', {'packages' : gym_packages})
+    else :
+        raise PermissionDenied()
+
+
+@login_required
+def MembershipRegistrationInstructions(request) :
+    if request.user.role == 'C' :
+        if request.method == 'POST' :
+            request.session['readInstructions'] = True
+            return redirect(MembershipRegistration)
+        else :
+            request.session['readInstructions'] = False
+            return render(request, 'Customer/membershipRegistrationInstruction.html')
+    else :
+        raise PermissionDenied()
+
+
+@login_required
+def MembershipRegistration(request) :
+    if request.user.role == 'C' :
+        if ('readInstructions' in request.session) and (request.session['readInstructions'] == True) :
+            if request.method == 'POST' :
+                request.session['choosenPackageID'] = request.POST['package']
+                return redirect(ConfirmOrderDetails)
+            else :
+                packages = Package.objects.all()
+                return render(request, 'Customer/membershipRegistration.html', {'packages' : packages})
+        else :
+            return redirect(MembershipRegistrationInstructions)
+    else :
+        raise PermissionDenied()
+
+
+@login_required
+def ConfirmOrderDetails(request) :
+    if request.user.role == 'C' :
+        if ('readInstructions' in request.session) and (request.session['readInstructions'] == True) :
+            if ('choosenPackageID' in request.session) and (request.session['choosenPackageID'] != None) :
+                user_object = request.user
+                if request.method == 'POST' :
+                    """--------------------------------------------------------------------------------------------------------------------------------"""
+                    # Needs work to be done here whe implementing payment portal
+                    PaymentPortal
+                    return HttpResponse('Payment Portal')
+                else :
+                    package_object = Package.objects.get(id=int(request.session['choosenPackageID']))
+                    if user_object.customer_profile_account.first() :
+                        customer_profile_object = user_object.customer_profile_account.get()
+                        if customer_profile_object.customer_membership.first() :
+                            membership_object = customer_profile_object.customer_membership.get()
+                            present_deadline = membership_object.deadline.replace(tzinfo=None)
+                        else :
+                            present_deadline = datetime.datetime.now(tz=None)
+                        future_deadline = present_deadline + datetime.timedelta(int(package_object.duration)*30)
+                        context = {'future_deadline': future_deadline, 'package' : package_object, 'customer' : customer_profile_object}
+                        return render(request, 'Customer/confirmOrderDetails.html', context)
+                    else :
+                        redirect(CreateCustomerProfile)
+            else :
+                return redirect(MembershipRegistration)
+        else :
+            return redirect(MembershipRegistrationInstructions)
+    else :
+        raise PermissionDenied()
 
 
 @login_required
@@ -123,26 +273,29 @@ def DisplayCustomerNotification(request) :
     Notification.objects.filter(expiry__lt=datetime.datetime.now()).delete()
     # To display the active notifications
     user_object = CustomUser.objects.get(username=request.user)
-    customer_profile_object = CustomerProfile.objects.get(account=user_object)
-    gym_class_object = customer_profile_object.gym_class
-    notification_objects = Notification.objects.filter(gym_class=gym_class_object)
-    num_notifications = len(notification_objects)
-    context = {'num_notifications' : num_notifications, 'notifications' : notification_objects}
-    if user_object.role == 'C' :
-        """membership_object = Membership.objects.get(name=user_object)"""
-        membership_object = user_object.customer_membership.get()
-        membership_deadline = membership_object.deadline
-        membership_deadline = membership_deadline.replace(tzinfo=None)
-        days_left = (membership_deadline - datetime.datetime.now(tz=None)).days
-        if days_left < 10 and days_left >= 0 :
-            context['membership_deadline_near'] = True
-            context['days_left_expiry'] = days_left
-        else :
-            context['membership_deadline_near'] = False
-    return render(request, 'Customer/displayCustomerNotification.html', context)
+    if user_object.customer_profile_account.first() :
+        customer_profile_object = CustomerProfile.objects.get(account=user_object)
+        gym_class_object = customer_profile_object.gym_class
+        notification_objects = Notification.objects.filter(gym_class=gym_class_object)
+        num_notifications = len(notification_objects)
+        context = {'num_notifications' : num_notifications, 'notifications' : notification_objects}
+        if user_object.role == 'C' :
+            if customer_profile_object.customer_membership.first() :
+                membership_object = customer_profile_object.customer_membership.get()
+                membership_deadline = membership_object.deadline
+                membership_deadline = membership_deadline.replace(tzinfo=None)
+                days_left = (membership_deadline - datetime.datetime.now(tz=None)).days
+                if days_left < 10 and days_left >= 0 :
+                    context['membership_deadline_near'] = True
+                    context['days_left_expiry'] = days_left
+                else :
+                    context['membership_deadline_near'] = False
+        return render(request, 'Customer/displayCustomerNotification.html', context)
+    else :
+        return redirect(CreateCustomerProfile)
 
 
-# Trainer Pages
+# ----------------------------------------------------------- Trainer Pages ------------------------------------------------------------
 
 
 @login_required
@@ -210,13 +363,12 @@ def DisplayTrainerIndividualGymClass(request, cls_id) :
         raise PermissionDenied()
 
 
-# Manager Pages
+# ----------------------------------------------------------- Manager Pages ------------------------------------------------------------
 
 
 @login_required
 def DisplayManagerProfile(request) :
     user_object = CustomUser.objects.get(username=request.user)
-    """manager_profile_object = ManagerProfile.objects.get(account=user_object)"""
     manager_profile_object = user_object.manager_profile_account.get()
     return render(request, 'Manager/profile.html', {'manager' : manager_profile_object})
 
@@ -250,8 +402,7 @@ def DisplayCustomerList(request) :
 def DisplayIndividualCustomer(request, cust_id) :
     customer_object = CustomerProfile.objects.get(id=cust_id)
     user_object = customer_object.account
-    """membership_object = Membership.objects.get(name=customer_object.account)"""
-    membership_object = user_object.customer_membership.get()
+    membership_object = customer_object.customer_membership.get()
     membership_deadline = membership_object.deadline
     membership_deadline = membership_deadline.replace(tzinfo=None)
     if membership_deadline >= datetime.datetime.now(tz=None) :
@@ -487,7 +638,7 @@ def EditEquipment(request, eq_id) :
             equipment_object.equipment_type = Equipmenttype.objects.get(id=int(eq_type_id))
             equipment_object.save()
             messages.success(request, 'The Equipment record has been modified successfully.')
-            return redirect( '/view-all-equipment')
+            return redirect('/view-all-equipment')
         else :
             equipment_type_objects = Equipmenttype.objects.all()
             return render(request, 'Manager/editEquipment.html', {'equipment' : equipment_object, 'equipment_types' : equipment_type_objects})
@@ -838,7 +989,7 @@ def ModifyTrainerGymClass(request, tra_id) :
         raise PermissionDenied()
 
 
-# Pages common to Trainer and Manager
+# ------------------------------------------------- Pages common to Trainer and Manager -------------------------------------------------
 
 
 @login_required

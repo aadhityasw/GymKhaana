@@ -1,0 +1,36 @@
+{% extends 'gymnasium/homebase.html' %}
+{% load static %}
+{% block header %}
+    <link rel="stylesheet" href="{% static 'css/registration/signup.css' %}" type="text/css">
+{% endblock %}
+
+{% block body %}
+    {% if user.is_authenticated %}
+        <h1>You are already logged in. Log-out to create another user.</h1>
+    {% else %}
+        <h1>Sign Up</h1>
+        <form method="POST" style="margin: 0px;">
+            {% csrf_token %}
+            <table>
+                {{ form.as_p }}
+            </table>
+            <button type="submit">Sign-Up</button>
+        </form>
+    {% endif %}
+{% endblock %}
+
+
+<!--
+<tr>
+    <th><label for="id_username">Username:</label></th>
+    <td><input type="text" name="username" maxlength="32" required id="id_username"></td>
+</tr>
+<tr>
+    <th><label for="id_email">Email:</label></th>
+    <td><input type="text" name="email" maxlength="32" required id="id_email"></td>
+</tr>
+<tr>
+    <th><label for="id_password">Password:</label></th>
+    <td><input type="password" name="password" maxlength="32" required id="id_password"></td>
+</tr>
+-->

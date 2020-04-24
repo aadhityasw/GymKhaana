@@ -15,8 +15,27 @@ class CustomUserChangeForm(UserChangeForm):
         model = CustomUser
 
 
-class CustomerProfileChangeForm(ModelForm) :
+"""class CustomerProfileChangeForm(ModelForm) :
 
     class Meta :
         model = CustomerProfile
-        exclude = ()
+        exclude = ()"""
+
+
+class UserSignUpForm(forms.Form):
+    username = forms.CharField(
+        required = True,
+        label = 'Username',
+        max_length = 32
+    )
+    email = forms.CharField(
+        required = True,
+        label = 'Email',
+        max_length = 32,
+    )
+    password = forms.CharField(
+        required = True,
+        label = 'Password',
+        max_length = 32,
+        widget = forms.PasswordInput()
+    )

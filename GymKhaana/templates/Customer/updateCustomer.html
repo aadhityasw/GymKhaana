@@ -8,7 +8,7 @@
 {% block body %}
     {% if user.is_authenticated %}
         <br>
-        <h1 class="title">Welcome {{ user }}</h1>
+        <h1 class="title">Welcome {{ customer.full_name }}</h1>
         <br>
         <h2>Edit Customer Profile</h2>
         <form method="post">

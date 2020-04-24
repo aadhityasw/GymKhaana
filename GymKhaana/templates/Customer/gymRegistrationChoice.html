@@ -1,0 +1,25 @@
+{% extends 'Customer/base.html' %} 
+{% load static %}
+
+{% block header %}
+    <link rel="stylesheet" href="{% static 'css/customer/membershipRegistration.css' %}" type="text/css">
+{% endblock %}
+
+{% block body %}
+    {% if user.is_authenticated %}
+        <div class="horizontal-scroll">
+            <!-- This part should be replaced by cards for each package. -->
+            <table>
+                {% for package in packages %}
+                    <tr>
+                        <th>{{ package.name }}</th>
+                        <td>Duration :  {{ package.duration }}</td>
+                        <td>Price : {{ package.price }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <button><a href="/membership-registration-instructions">Proceed to Register</a></button>
+        <button><a href="/customer-profile">Skip Registration for now and do it later.</a></button>
+    {% endif %}
+{% endblock %}

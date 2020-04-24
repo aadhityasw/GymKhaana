@@ -1,0 +1,25 @@
+{% extends 'Customer/base.html' %} 
+{% load static %}
+
+{% block header %}
+    <link rel="stylesheet" href="{% static 'css/customer/membershipRegistration.css' %}" type="text/css">
+    <script src="{% static 'js/customer/instructionAgreementValidation.js' %}"></script>
+{% endblock %}
+
+{% block body %}
+    {% if user.is_authenticated %}
+        <br><br>
+        <h1>Instructions</h1>
+        <br>
+        <h4>Read the instructions carefully.</h4>
+        <form method="post">
+            {% csrf_token %}
+            <div class="vertical-scroll-box">
+                <p>These are the instructions Read them carefully before coming to a conclusion on proceeding further.</p>
+            </div>
+            <input type="checkbox" name="agreement" id="agreement" required> I Agree
+            <button onclick="validateAgreement()">Continue</button>
+        </form>
+        <button><a href="/customer-profile">Skip Registration for now and do it later.</a></button>
+    {% endif %}
+{% endblock %}

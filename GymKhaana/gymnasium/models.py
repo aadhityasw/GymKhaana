@@ -71,10 +71,10 @@ class GymClass(models.Model) :
 
 class Membership(models.Model) :
     name = models.ForeignKey(
-        'users.CustomUser', 
+        'users.CustomerProfile', 
         on_delete=models.CASCADE, 
         related_name="customer_membership",
-        limit_choices_to={'role' : 'C'})
+    )
     deadline = models.DateTimeField()
     package = models.ForeignKey('Package', on_delete=models.SET_NULL, related_name="membership_for_package", null=True)
     gym_class = models.ForeignKey('GymClass', on_delete=models.SET_NULL, related_name="membership_for_gym_class", null=True)
@@ -123,3 +123,9 @@ class Announcement(models.Model) :
 
     def __str__(self):
         return (str(self.author))
+
+
+"""class Payment(models.Model) :
+    customer = models.ForeignKey('users.CustomerProfile', on_delete=models.CASCADE, related_name="customer_membership")
+    payment_id = models.IntegerField()
+    reciept = models.FileField()"""

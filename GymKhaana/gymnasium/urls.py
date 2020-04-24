@@ -16,6 +16,8 @@ urlpatterns = [
 
     path('change-password/', views.changePassword, name='change-password'),
 
+    path('user-registration/', views.UserSignUp, name='new-user-sign-up'),
+
     # General Outer Website Links
 
     path('aquatics/', views.Aquatics, name='aquatics'),
@@ -24,9 +26,19 @@ urlpatterns = [
 
     # Customer Website Links
 
+    path('create-customer-profile/', views.CreateCustomerProfile, name='create-customer-profile'),
+
     path('customer-profile/', views.DisplayCustomerProfile, name='customer-profile'),
 
     path('edit-customer-profile/', views.ChangeCustomerProfile, name='edit-customer-profile'),
+
+    path('initial-gym-registration-choice/', views.GymRegistrationChoice, name='initial-gym-registration-choice'),
+
+    path('membership-registration-instructions/', views.MembershipRegistrationInstructions, name='membership-registration-instructions'),
+
+    path('membership-registration/', views.MembershipRegistration, name='membership-registration'),
+
+    path('confirm-order-details/', views.ConfirmOrderDetails, name='confirm-order-details'),
 
     path('view-notifications/', views.DisplayCustomerNotification, name='display-notification'),
 
