@@ -16,7 +16,7 @@ urlpatterns = [
 
     path('change-password/', views.changePassword, name='change-password'),
 
-    path('user-registration/', views.UserSignUp, name='new-user-sign-up'),
+    path('user-registration/<str:role>/', views.UserSignUp, name='new-user-sign-up'),
 
     # General Outer Website Links
 
@@ -46,6 +46,8 @@ urlpatterns = [
 
     path('trainer-profile/', views.DisplayTrainerProfile, name='trainer-profile'),
 
+    path('create-trainer-profile/', views.CreateTrainerProfile, name='create-trainer-profile'),
+
     path('edit-trainer-profile/', views.ChangeTrainerProfile, name='edit-trainer-profile'),
 
     path('trainer/view-gym-class-list/', views.DisplayTrainerGymClassList, name='view-trainer-gym-class-list'),
@@ -56,11 +58,11 @@ urlpatterns = [
 
     path('manager-profile/', views.DisplayManagerProfile, name='manager-profile'),
 
+    path('create-manager-profile/', views.CreateManagerProfile, name='create-manager-profile'),
+
     path('edit-manager-profile/', views.ChangeManagerProfile, name='edit-manager-profile'),
 
     path('view-customer-list/', views.DisplayCustomerList, name='view-customer-list'),
-
-    path('view-customer/<int:cust_id>/', views.DisplayIndividualCustomer, name='view-individual-customer'),
 
     path('view-trainer-list/', views.DisplayTrainerList, name='view-trainer-list'),
 
@@ -143,5 +145,7 @@ urlpatterns = [
     path('post-notification/', views.PostNotification, name='post-notification'),
 
     path('delete-notification/<int:not_id>/', views.DeleteIndividualNotification, name='delete-notification'),
+
+    path('view-customer/<int:cust_id>/', views.DisplayIndividualCustomer, name='view-individual-customer'),
 
 ]

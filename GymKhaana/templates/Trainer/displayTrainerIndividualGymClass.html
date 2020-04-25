@@ -28,7 +28,7 @@
                         <ul>
                             <li>
                                 {% for customer in customers %}
-                                    {{ customer.full_name }} - {{ customer.reg_no }}
+                                    <a href="/view-customer/{{ customer.id }}">{{ customer.full_name }} - {{ customer.reg_no }}</a>
                                 {% endfor %}
                             </li>
                         </ul>

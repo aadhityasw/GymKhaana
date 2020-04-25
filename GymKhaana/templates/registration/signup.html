@@ -5,18 +5,14 @@
 {% endblock %}
 
 {% block body %}
-    {% if user.is_authenticated %}
-        <h1>You are already logged in. Log-out to create another user.</h1>
-    {% else %}
-        <h1>Sign Up</h1>
-        <form method="POST" style="margin: 0px;">
-            {% csrf_token %}
-            <table>
-                {{ form.as_p }}
-            </table>
-            <button type="submit">Sign-Up</button>
-        </form>
-    {% endif %}
+    <h1>Sign Up</h1>
+    <form method="POST" style="margin: 0px;">
+        {% csrf_token %}
+        <table>
+            {{ form.as_p }}
+        </table>
+        <button type="submit">Sign-Up</button>
+    </form>
 {% endblock %}
 
 

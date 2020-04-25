@@ -70,9 +70,13 @@ def changePassword(request) :
 
 
 def UserSignUp(request, role='C') :
-    if role in ['T', 'M', 'A'] and request.user==None :
+    if role in ['T', 'M', 'A'] and request.user.is_authenticated==False :
+        # Trainer, Manager or admin account cannot be created without logged in users.
         raise forms.ValidationError('You do not have the authority to create User of this category.')
-    elif role in ['C', 'T', 'M'] :
+    elif (role == 'C' and (request.user.is_authenticated==False or request.user.role in ['M', 'A'])) or (role in ['C', 'T', 'M'] and request.user.role in ['M', 'A'])  :
+        # A customer account can be created without any logging in.
+        # In order to create an account of manager, trainer (or customer in rare cases) the initiator should sither be a manager or admin.
+        # A Trainer or customer do not have rights to create any user accounts.
         if request.method == 'POST':
             form = UserSignUpForm(request.POST)
             if form.is_valid():
@@ -84,20 +88,27 @@ def UserSignUp(request, role='C') :
                     user_object = CustomUser.objects.create_user(username, email, password)
                     user_object.role = role
                     user_object.save()
-                    user = authenticate(username = username, password = password)
-                    login(request, user)
-                    if role == 'C' :
-                        return redirect(CreateCustomerProfile)
-                    elif role == 'T' :
-                        return redirect(CreateTrainerProfile, user_id=user_object.id)  
-                    elif role == 'M' :
-                          return redirect(CreateManagerProfile, user_id=user_object.id)
+                    if request.user.is_authenticated==False :
+                        user = authenticate(username = username, password = password)
+                        login(request, user)
+                        if role == 'C' :
+                            return redirect(CreateCustomerProfile)
+                    else :
+                        # An accounthas been created, and the user details should be filled by the user when they log-into their account for the first time.
+                        messages.success(request, 'User Account has been created Successfully.')
+                        if role == 'T' :
+                            return redirect(DisplayTrainerList)  
+                        elif role == 'M' :
+                            return redirect(DisplayManagerList)
+                        elif role == 'C' :
+                            return redirect(DisplayCustomerList)
                 else:
                     raise forms.ValidationError('Looks like a username with that email or password already exists')
         else:
             form = UserSignUpForm()
         return render(request, 'registration/signup.html', {'form' : form})
     elif role == 'A' :
+        # Only Administrators can create other administrator accounts.
         raise forms.ValidationError('You do not have the authority to create a Admin Level User.')
     else :
         raise forms.ValidationError('Invalid Role. This system should not be intervened. Do not try this again !!!')
@@ -108,7 +119,7 @@ def UserSignUp(request, role='C') :
 
 @login_required
 def CreateCustomerProfile(request) :
-    if request.user.customer_profile_account.first() :
+    if request.user.customer_profile_account.exists() :
         return redirect(DisplayCustomerProfile)
     else :
         if request.method == 'POST' :
@@ -144,9 +155,9 @@ def CreateCustomerProfile(request) :
 @login_required
 def DisplayCustomerProfile(request) :
     user_object = CustomUser.objects.get(username=request.user)
-    if user_object.customer_profile_account.first() :
+    if user_object.customer_profile_account.exists() :
         customer_profile_object = user_object.customer_profile_account.get()
-        if not customer_profile_object.customer_membership.first() :
+        if not customer_profile_object.customer_membership.exists() :
             membership_status = "Inactive"
             membership_object = None
         else :
@@ -165,7 +176,7 @@ def DisplayCustomerProfile(request) :
 @login_required
 def ChangeCustomerProfile(request) :
     user_object = CustomUser.objects.get(username=request.user)
-    if user_object.customer_profile_account.first() :
+    if user_object.customer_profile_account.exists() :
         customer_profile_object = user_object.customer_profile_account.get()
         if request.method == 'POST' :
             user_object.email = request.POST['email']
@@ -247,9 +258,9 @@ def ConfirmOrderDetails(request) :
                     return HttpResponse('Payment Portal')
                 else :
                     package_object = Package.objects.get(id=int(request.session['choosenPackageID']))
-                    if user_object.customer_profile_account.first() :
+                    if user_object.customer_profile_account.exists() :
                         customer_profile_object = user_object.customer_profile_account.get()
-                        if customer_profile_object.customer_membership.first() :
+                        if customer_profile_object.customer_membership.exists() :
                             membership_object = customer_profile_object.customer_membership.get()
                             present_deadline = membership_object.deadline.replace(tzinfo=None)
                         else :
@@ -258,7 +269,7 @@ def ConfirmOrderDetails(request) :
                         context = {'future_deadline': future_deadline, 'package' : package_object, 'customer' : customer_profile_object}
                         return render(request, 'Customer/confirmOrderDetails.html', context)
                     else :
-                        redirect(CreateCustomerProfile)
+                        return redirect(CreateCustomerProfile)
             else :
                 return redirect(MembershipRegistration)
         else :
@@ -273,14 +284,14 @@ def DisplayCustomerNotification(request) :
     Notification.objects.filter(expiry__lt=datetime.datetime.now()).delete()
     # To display the active notifications
     user_object = CustomUser.objects.get(username=request.user)
-    if user_object.customer_profile_account.first() :
+    if user_object.customer_profile_account.exists() :
         customer_profile_object = CustomerProfile.objects.get(account=user_object)
         gym_class_object = customer_profile_object.gym_class
         notification_objects = Notification.objects.filter(gym_class=gym_class_object)
         num_notifications = len(notification_objects)
         context = {'num_notifications' : num_notifications, 'notifications' : notification_objects}
         if user_object.role == 'C' :
-            if customer_profile_object.customer_membership.first() :
+            if customer_profile_object.customer_membership.exists() :
                 membership_object = customer_profile_object.customer_membership.get()
                 membership_deadline = membership_object.deadline
                 membership_deadline = membership_deadline.replace(tzinfo=None)
@@ -301,64 +312,109 @@ def DisplayCustomerNotification(request) :
 @login_required
 def DisplayTrainerProfile(request) :
     user_object = CustomUser.objects.get(username=request.user)
-    trainer_profile_object = user_object.trainer_profile_account.get()
-    num_gym_class = len(trainer_profile_object.gym_class.all())
-    return render(request, 'Trainer/profile.html', {'trainer' : trainer_profile_object, 'num_gym_class' : num_gym_class})
+    if user_object.role == 'T' :
+        if user_object.trainer_profile_account.exists() :
+            trainer_profile_object = user_object.trainer_profile_account.get()
+            num_gym_class = len(trainer_profile_object.gym_class.all())
+            return render(request, 'Trainer/profile.html', {'trainer' : trainer_profile_object, 'num_gym_class' : num_gym_class})
+        else :
+            return redirect(CreateTrainerProfile)
+    else :
+        raise PermissionDenied()
+
+
+@login_required
+def CreateTrainerProfile(request) :
+    user_object = request.user
+    if user_object.trainer_profile_account.exists() :
+        return redirect(DisplayTrainerProfile)
+    else :
+        if user_object.role == 'T' :
+            if request.method == 'POST' :
+                trainer_profile_object = TrainerProfile.objects.create(
+                    account = request.user,
+                    full_name = request.POST['full_name'],
+                    mobile = request.POST['mobile'],
+                    address = request.POST['address'],
+                    age = request.POST['age'],
+                    medical_history = request.POST['medical_history'],
+                    gender = request.POST['gender']
+                )
+                messages.success(request, 'Details entered have been entered.')
+                return redirect('/trainer-profile')
+            else :
+                return render(request, 'Trainer/createTrainerProfile.html')
+        else :
+            raise PermissionDenied()
 
 
 @login_required
 def ChangeTrainerProfile(request) :
     user_object = CustomUser.objects.get(username=request.user)
-    trainer_profile_object = user_object.trainer_profile_account.get()
-    if request.method == 'POST' :
-        user_object.email = request.POST['email']
-        trainer_profile_object.full_name = request.POST['full_name']
-        trainer_profile_object.mobile = request.POST['mobile']
-        trainer_profile_object.address = request.POST['address']
-        trainer_profile_object.age = request.POST['age']
-        trainer_profile_object.medical_history = request.POST['medical_history']
-        trainer_profile_object.gender = request.POST['gender']
-        user_object.save()
-        trainer_profile_object.save()
-        messages.success(request, 'Details entered have been updated.')
-        return redirect('/trainer-profile')
+    if user_object.role == 'T' :
+        if user_object.trainer_profile_account.exists() :
+            trainer_profile_object = user_object.trainer_profile_account.get()
+            if request.method == 'POST' :
+                user_object.email = request.POST['email']
+                trainer_profile_object.full_name = request.POST['full_name']
+                trainer_profile_object.mobile = request.POST['mobile']
+                trainer_profile_object.address = request.POST['address']
+                trainer_profile_object.age = request.POST['age']
+                trainer_profile_object.medical_history = request.POST['medical_history']
+                trainer_profile_object.gender = request.POST['gender']
+                user_object.save()
+                trainer_profile_object.save()
+                messages.success(request, 'Details entered have been updated.')
+                return redirect('/trainer-profile')
+            else :
+                return render(request, 'Trainer/updateTrainer.html', {'trainer' : trainer_profile_object})
+        else :
+            return redirect(CreateTrainerProfile)
     else :
-        return render(request, 'Trainer/updateTrainer.html', {'trainer' : trainer_profile_object})
+        raise PermissionDenied()
 
 
 @login_required
 def DisplayTrainerGymClassList(request) :
-    if request.user.role == 'T' :
-        trainer_profile_object = request.user.trainer_profile_account.get()
-        gym_class_objects = trainer_profile_object.gym_class.all()
-        num_gym_classes = len(gym_class_objects)
-        return render(request, 'Trainer/displayTrainerGymClassList.html', {'trainer' : trainer_profile_object, 'gym_classes' : gym_class_objects, 'num_gym_classes' : num_gym_classes})
+    user_object = request.user
+    if user_object.role == 'T' :
+        if user_object.trainer_profile_account.exists() :
+            trainer_profile_object = user_object.trainer_profile_account.get()
+            gym_class_objects = trainer_profile_object.gym_class.all()
+            num_gym_classes = len(gym_class_objects)
+            return render(request, 'Trainer/displayTrainerGymClassList.html', {'trainer' : trainer_profile_object, 'gym_classes' : gym_class_objects, 'num_gym_classes' : num_gym_classes})
+        else :
+            return redirect(CreateTrainerProfile)
     else :
         raise PermissionDenied()
 
 
 @login_required
 def DisplayTrainerIndividualGymClass(request, cls_id) :
-    if request.user.role == 'T' :
-        current_trainer_profile_object = request.user.trainer_profile_account.get()
-        possible_gym_class_objects = current_trainer_profile_object.gym_class.all()
-        gym_class_object = GymClass.objects.get(id=cls_id)
-        if gym_class_object in possible_gym_class_objects :
-            customer_profile_objects = gym_class_object.customer_profile_for_gym_class.all()
-            num_customers = len(customer_profile_objects)
-            trainer_profile_objects = gym_class_object.allocated_trainers.all()
-            num_trainers = len(trainer_profile_objects)
-            context = {
-                'gym_class' : gym_class_object,
-                'customers' : customer_profile_objects,
-                'num_customers' : num_customers,
-                'trainers' : trainer_profile_objects,
-                'num_trainers' : num_trainers,
-                'current_trainer' : current_trainer_profile_object,
-            }
-            return render(request, 'Trainer/displayTrainerIndividualGymClass.html', context)
+    user_object = request.user
+    if user_object.role == 'T' :
+        if user_object.trainer_profile_account.exists() :
+            current_trainer_profile_object = user_object.trainer_profile_account.get()
+            possible_gym_class_objects = current_trainer_profile_object.gym_class.all()
+            gym_class_object = GymClass.objects.get(id=cls_id)
+            if gym_class_object in possible_gym_class_objects :
+                customer_profile_objects = gym_class_object.customer_profile_for_gym_class.all()
+                num_customers = len(customer_profile_objects)
+                trainer_profile_objects = gym_class_object.allocated_trainers.all()
+                num_trainers = len(trainer_profile_objects)
+                context = {
+                    'gym_class' : gym_class_object,
+                    'customers' : customer_profile_objects,
+                    'num_customers' : num_customers,
+                    'trainers' : trainer_profile_objects,
+                    'num_trainers' : num_trainers,
+                    'current_trainer' : current_trainer_profile_object,
+                }
+                return render(request, 'Trainer/displayTrainerIndividualGymClass.html', context)
+            else :
+                raise PermissionDenied()
         else :
-            raise PermissionDenied()
+            return redirect(CreateTrainerProfile)
     else :
         raise PermissionDenied()
 
@@ -368,93 +424,135 @@ def DisplayTrainerIndividualGymClass(request, cls_id) :
 
 @login_required
 def DisplayManagerProfile(request) :
-    user_object = CustomUser.objects.get(username=request.user)
-    manager_profile_object = user_object.manager_profile_account.get()
-    return render(request, 'Manager/profile.html', {'manager' : manager_profile_object})
+    if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+        user_object = CustomUser.objects.get(username=request.user)
+        if user_object.manager_profile_account.exists() :
+            manager_profile_object = user_object.manager_profile_account.get()
+            return render(request, 'Manager/profile.html', {'manager' : manager_profile_object})
+        else :
+            return redirect(CreateManagerProfile)
+    else :
+        raise PermissionDenied()
+
+
+@login_required
+def CreateManagerProfile(request) :
+    user_object = request.user
+    if user_object.manager_profile_account.exists() :
+        return redirect(DisplayManagerProfile)
+    else :
+        if user_object.role == 'M' :
+            if request.method == 'POST' :
+                manager_profile_object = ManagerProfile.objects.create(
+                    account = request.user,
+                    full_name = request.POST['full_name'],
+                    mobile = request.POST['mobile'],
+                    address = request.POST['address'],
+                    age = request.POST['age'],
+                    gender = request.POST['gender']
+                )
+                messages.success(request, 'Details entered have been entered.')
+                return redirect('/manager-profile')
+            else :
+                return render(request, 'Manager/createManagerProfile.html')
+        else :
+            raise PermissionDenied()
 
 
 @login_required
 def ChangeManagerProfile(request) :
-    user_object = CustomUser.objects.get(username=request.user)
-    manager_profile_object = user_object.manager_profile_account.get()
-    if request.method == 'POST' :
-        user_object.email = request.POST['email']
-        manager_profile_object.full_name = request.POST['full_name']
-        manager_profile_object.mobile = request.POST['mobile']
-        manager_profile_object.address = request.POST['address']
-        manager_profile_object.age = request.POST['age']
-        manager_profile_object.gender = request.POST['gender']
-        user_object.save()
-        manager_profile_object.save()
-        messages.success(request, 'Details entered have been updated.')
-        return redirect('/manager-profile')
+    if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+        user_object = CustomUser.objects.get(username=request.user)
+        if user_object.manager_profile_account.exists() :
+            manager_profile_object = user_object.manager_profile_account.get()
+            if request.method == 'POST' :
+                user_object.email = request.POST['email']
+                manager_profile_object.full_name = request.POST['full_name']
+                manager_profile_object.mobile = request.POST['mobile']
+                manager_profile_object.address = request.POST['address']
+                manager_profile_object.age = request.POST['age']
+                manager_profile_object.gender = request.POST['gender']
+                user_object.save()
+                manager_profile_object.save()
+                messages.success(request, 'Details entered have been updated.')
+                return redirect('/manager-profile')
+            else :
+                return render(request, 'Manager/updateManager.html', {'manager' : manager_profile_object})
+        else :
+            return redirect(CreateManagerProfile)
     else :
-        return render(request, 'Manager/updateManager.html', {'manager' : manager_profile_object})
+        raise PermissionDenied()
 
 
 @login_required
 def DisplayCustomerList(request) :
-    customer_objects = CustomerProfile.objects.all()
-    return render(request, 'Manager/displayCustomerList.html', {'customers' : customer_objects})
-
-
-@login_required
-def DisplayIndividualCustomer(request, cust_id) :
-    customer_object = CustomerProfile.objects.get(id=cust_id)
-    user_object = customer_object.account
-    membership_object = customer_object.customer_membership.get()
-    membership_deadline = membership_object.deadline
-    membership_deadline = membership_deadline.replace(tzinfo=None)
-    if membership_deadline >= datetime.datetime.now(tz=None) :
-        membership_status = "Active"
+    if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+        customer_objects = CustomerProfile.objects.all()
+        return render(request, 'Manager/displayCustomerList.html', {'customers' : customer_objects})
     else :
-        membership_status = "Inactive"
-    context = {'customer' : customer_object, 'membership_status' : membership_status, 'membership' : membership_object}
-    return render(request, 'Manager/displayIndividualCustomer.html', context)
+        raise PermissionDenied()
 
 
 @login_required
 def DisplayTrainerList(request) :
-    trainer_objects = TrainerProfile.objects.all()
-    return render(request, 'Manager/displayTrainerList.html', {'trainers' : trainer_objects})
+    if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+        trainer_objects = TrainerProfile.objects.all()
+        return render(request, 'Manager/displayTrainerList.html', {'trainers' : trainer_objects})
+    else :
+        raise PermissionDenied()
 
 
 @login_required
 def DisplayIndividualTrainer(request, tra_id) :
-    trainer_object = TrainerProfile.objects.get(id=tra_id)
-    num_gym_class = len(trainer_object.gym_class.all())
-    return render(request, 'Manager/displayIndividualTrainer.html', {'trainer' : trainer_object, 'num_gym_class' : num_gym_class})
+    if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+        trainer_object = TrainerProfile.objects.get(id=tra_id)
+        num_gym_class = len(trainer_object.gym_class.all())
+        return render(request, 'Manager/displayIndividualTrainer.html', {'trainer' : trainer_object, 'num_gym_class' : num_gym_class})
+    else :
+        raise PermissionDenied()
 
 
 @login_required
 def DisplayManagerList(request) :
-    manager_objects = ManagerProfile.objects.all()
-    return render(request, 'Manager/displayManagerList.html', {'managers' : manager_objects})
+    if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+        manager_objects = ManagerProfile.objects.all()
+        return render(request, 'Manager/displayManagerList.html', {'managers' : manager_objects})
+    else :
+        raise PermissionDenied()
 
 
 @login_required
 def DisplayIndividualManager(request, man_id) :
-    # man_id is the id in the Manager Profile table
-    manager_profile_object = ManagerProfile.objects.get(id=man_id)
-    """print(man_id)
-    print(request.user.manager_profile_account.all()[0].id)"""
-    # If it is the currently logged in user
-    if man_id == request.user.manager_profile_account.all()[0].id :
-        return redirect('/manager-profile')
-    # In all other cases
-    return render(request, 'Manager/displayIndividualManager.html', {'manager' : manager_profile_object})
+    if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+        # man_id is the id in the Manager Profile table
+        manager_profile_object = ManagerProfile.objects.get(id=man_id)
+        """print(man_id)
+        print(request.user.manager_profile_account.all()[0].id)"""
+        # If it is the currently logged in user
+        if man_id == request.user.manager_profile_account.all()[0].id :
+            return redirect('/manager-profile')
+        # In all other cases
+        return render(request, 'Manager/displayIndividualManager.html', {'manager' : manager_profile_object})
+    else :
+        raise PermissionDenied()
 
 
 @login_required
 def DisplayAdminList(request) :
-    admin_user_objects = CustomUser.objects.filter(models.Q(is_superuser=True) | models.Q(role='A'))
-    return render(request, 'Manager/displayAdminList.html', {'admin_users' : admin_user_objects})
+    if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+        admin_user_objects = CustomUser.objects.filter(models.Q(is_superuser=True) | models.Q(role='A'))
+        return render(request, 'Manager/displayAdminList.html', {'admin_users' : admin_user_objects})
+    else :
+        raise PermissionDenied()
 
 
 @login_required
 def DisplayIndividualAdmin(request, adm_id) :
-    admin_user_object = CustomUser.objects.get(id=adm_id)
-    return render(request, 'Manager/displayIndividualAdmin.html', {'admin_user' : admin_user_object})
+    if request.user.role == 'M' or request.user.role == 'A' or request.user.is_superuser :
+        admin_user_object = CustomUser.objects.get(id=adm_id)
+        return render(request, 'Manager/displayIndividualAdmin.html', {'admin_user' : admin_user_object})
+    else :
+        raise PermissionDenied()
 
 
 @login_required
@@ -1103,3 +1201,30 @@ def DeleteIndividualNotification(request, not_id) :
             return render(request, 'notification/deleteNotification.html', {'notification' : notification_object, 'base_template' : base_template})
         else :
             raise PermissionDenied()
+
+
+@login_required
+def DisplayIndividualCustomer(request, cust_id) :
+    if request.user.role == 'C' :
+        raise PermissionDenied()
+    else :
+        customer_object = CustomerProfile.objects.get(id=cust_id)
+        user_object = customer_object.account
+        if request.user.role == 'T' :
+            my_gym_classes = request.user.trainer_profile_account.get().gym_class.all()
+            customer_gym_class = user_object.gym_class
+            if (customer_gym_class == None) or (customer_gym_class not in my_gym_classes) :
+                raise PermissionDenied()
+            base_template = 'Trainer/base.html'
+        else :
+            # If the currently logged in user is Manager or an Admin
+            base_template = 'Manager/base.html'
+        membership_object = customer_object.customer_membership.get()
+        membership_deadline = membership_object.deadline
+        membership_deadline = membership_deadline.replace(tzinfo=None)
+        if membership_deadline >= datetime.datetime.now(tz=None) :
+            membership_status = "Active"
+        else :
+            membership_status = "Inactive"
+        context = {'customer' : customer_object, 'membership_status' : membership_status, 'membership' : membership_object, 'base_template' : base_template}
+        return render(request, 'Manager/displayIndividualCustomer.html', context)
