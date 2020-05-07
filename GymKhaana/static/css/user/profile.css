@@ -19,6 +19,34 @@ h2 {
 .equipment-list li:hover {
     background-color: unset;
 }
+.title {
+	text-align: center;
+	margin-bottom: 20px;
+	margin-top: 20px;
+}
+
+.title::before {
+	content: '';
+	background: #7b1798 ;
+	height:5px;
+	width: 250px;
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+	transform: translateY(63px);
+}
+
+.title::after {
+    content: '';
+    background: #7b1798 ;
+    height:10px;
+    width: 80px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px ;
+    display: block;
+    transform: translateY(8px);
+}
 
 table {
     background-image: linear-gradient(45deg,#efefef 25%,rgba(239,239,239,0) 25%,rgba(239,239,239,0) 75%,#efefef 75%,#efefef),linear-gradient(45deg,#efefef 25%,rgba(239,239,239,0) 25%,rgba(239,239,239,0) 75%,#efefef 75%,#efefef);
@@ -57,31 +85,3 @@ button a {
     font-size: large;
 }
 
-.title {
-	text-align: center;
-	margin-bottom: 20px;
-	margin-top: 20px;
-}
-
-.title::before {
-	content: '';
-	background: #7b1798 ;
-	height:5px;
-	width: 250px;
-	margin-left: auto;
-	margin-right: auto;
-	display: block;
-	transform: translateY(63px);
-}
-
-.title::after {
-    content: '';
-    background: #7b1798 ;
-    height:10px;
-    width: 80px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 40px ;
-    display: block;
-    transform: translateY(8px);
-}
