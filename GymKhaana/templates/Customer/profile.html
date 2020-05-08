@@ -8,7 +8,9 @@
 {% block body %}
     {% if user.is_authenticated %}
     <br>
-        <h1 class="title">Welcome {{ user }}</h1>
+    <div class="title">
+        <h1>Welcome {{ user }}</h1>
+    </div>
         <br>
         <h2>Customer Profile</h2>
         <br>
