@@ -2,11 +2,13 @@
 {% load static %}
 
 {% block header %}
-    <link rel="stylesheet" href="{% static 'css/common/list.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/gymnasium/announcement.css' %}" type="text/css">
 {% endblock %}
 
 {% block body %}
-    <h1>Announcements</h1>
+<br>
+    <h1 class="title">Announcements</h1>
+
     {% if num_announcement > 0 %}
         <table>
             <tr>
@@ -21,6 +23,8 @@
             {% endfor %}
         </table>
     {% else %}
+    <br>
+    <br>
         <h2>There are no announcements at this time. Please check back later.</h2>
     {% endif %}
 {% endblock %}

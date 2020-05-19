@@ -84,8 +84,9 @@ button a {
     margin-right: auto;
     margin-bottom: 40px ;
     display: block;
-    transform: translateY(18px);
+    transform: translateY(8px);
 }
-  
-  
-  
+
+.footer {
+    display: none;
+}

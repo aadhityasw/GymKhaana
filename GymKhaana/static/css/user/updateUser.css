@@ -53,7 +53,7 @@ button{
 
 .save {
     padding: 11px;
-    background-color: #427c07;
+    background-color: #ff0000;
 }
 
 button a {
@@ -89,7 +89,7 @@ button a {
     margin-right: auto;
     margin-bottom: 40px ;
     display: block;
-    transform: translateY(8px);
+    transform: translateY(18px);
 }
   
   

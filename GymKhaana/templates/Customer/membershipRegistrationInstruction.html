@@ -9,17 +9,24 @@
 {% block body %}
     {% if user.is_authenticated %}
         <br><br>
-        <h1>Instructions</h1>
+        <h1 class="title">Instructions</h1>
         <br>
-        <h4>Read the instructions carefully.</h4>
+        <h2>Read the instructions carefully.</h2>
+        <br>
         <form method="post">
             {% csrf_token %}
             <div class="vertical-scroll-box">
                 <p>These are the instructions Read them carefully before coming to a conclusion on proceeding further.</p>
             </div>
-            <input type="checkbox" name="agreement" id="agreement" required> I Agree
+            <br>
+            <br>
+            <p>  <input type="checkbox" name="agreement" id="agreement" required> I Agree</p>
+            <br>
+            <br>
+            <br>
             <button onclick="validateAgreement()">Continue</button>
         </form>
+        <br>
         <button><a href="/customer-profile">Skip Registration for now and do it later.</a></button>
     {% endif %}
 {% endblock %}
