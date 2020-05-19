@@ -41,11 +41,23 @@
     transform: translateY(8px);
 }
 
+/*.contact {
+    margin-bottom: 80px;
+    overflow-x: scroll;
+    white-space: nowrap;
+}
+
+.card-deck {
+    overflow: scroll;
+    white-space: nowrap;
+    flex-wrap: nowrap;
+}*/
 
 .card {
     background: linear-gradient(to bottom right, rgb(1, 255, 255), rgb(168, 7, 231));
     border: 2px solid black;
-    margin-left:17px;;
+    margin-left:17px;
+    /*overflow-x: scroll;*/
     min-width: fit-content;
 }
 

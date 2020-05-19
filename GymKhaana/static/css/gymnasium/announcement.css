@@ -86,6 +86,7 @@ button a {
     display: block;
     transform: translateY(8px);
 }
-  
-  
-  
+
+.footer {
+    display: none;
+}
