@@ -238,7 +238,8 @@ def MembershipRegistration(request) :
                 return redirect(ConfirmOrderDetails)
             else :
                 packages = Package.objects.all()
-                return render(request, 'Customer/membershipRegistration.html', {'packages' : packages})
+                num_packages = len(packages)
+                return render(request, 'Customer/membershipRegistration.html', {'packages' : packages, 'num_packages' : num_packages})
         else :
             return redirect(MembershipRegistrationInstructions)
     else :
